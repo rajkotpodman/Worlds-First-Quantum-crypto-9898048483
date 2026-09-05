@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Secure Space &amp; Android CI/CD Pipeline Dashboard</title>
+    <meta name="description" content="DevSecOps CI/CD pipeline manager with Android debug.apk output to /dist, Sovereign Token Clearing Wallet (51% Admin Stake &amp; 1000 Token New User Grants), WebAuthn TEE Biometrics, Tor v3 daemon, and AI Secure Space." />
+    <meta property="og:title" content="AI Secure Space &amp; Android CI/CD Pipeline Dashboard" />
+    <meta property="og:description" content="DevSecOps CI/CD pipeline manager with Android debug.apk output to /dist, Sovereign Token Clearing Wallet (51% Admin Stake &amp; 1000 Token New User Grants), WebAuthn TEE Biometrics, Tor v3 daemon, and AI Secure Space." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root">
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #020617; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; box-sizing: border-box; text-align: center;">
+        <div style="position: relative; width: 84px; height: 84px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; inset: 0; border: 3px solid rgba(56, 189, 248, 0.15); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <div style="position: absolute; inset: 7px; border: 2px dashed rgba(168, 85, 247, 0.35); border-bottom-color: #a855f7; border-radius: 50%; animation: spin-reverse 2s linear infinite;"></div>
+          <svg style="width: 38px; height: 38px; color: #38bdf8;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; letter-spacing: 0.05em; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          AI SECURE SPACE
+        </h1>
+        <div style="font-size: 13px; color: #94a3b8; margin-bottom: 18px; letter-spacing: 0.02em;">
+          Autonomous Sovereign Security Node
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 9999px; padding: 6px 16px; font-size: 11px; color: #38bdf8; font-family: monospace;">
+          <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; animation: pulse 1.5s ease-in-out infinite;"></span>
+          Initializing Cryptographic Engine...
+        </div>
+        <div id="init-error-log" style="display: none; margin-top: 18px; padding: 12px 16px; max-width: 90%; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; color: #fca5a5; font-size: 12px; font-family: monospace; word-break: break-word;"></div>
+        <style>
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes spin-reverse { to { transform: rotate(-360deg); } }
+          @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.85); } }
+        </style>
+      </div>
+    </div>
+    <script>
+      window.addEventListener('error', function(e) {
+        var errEl = document.getElementById('init-error-log');
+        if (errEl) {
+          errEl.style.display = 'block';
+          errEl.textContent = 'Bootstrap Notice: ' + (e.message || (e.error && e.error.message) || e.toString());
+        }
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

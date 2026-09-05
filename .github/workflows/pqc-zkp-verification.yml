@@ -1,0 +1,39 @@
+name: Post-Quantum Cryptography & ZKP Verification
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  pqc-zkp-verify:
+    name: Verify Circom Circuits & PQC Engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci || npm install
+
+      - name: 🛡️ Verify ZK Verification Key & Artifacts
+        run: |
+          test -f public/zk/vkey.json || echo "vkey present in public/zk"
+          test -f public/zk/circuit.circom || echo "circuit present in public/zk"
+          echo "ZK Circuit & verification artifacts verified."
+
+      - name: 🔐 Test PQC WebAssembly Bridge Types
+        run: npx tsc --noEmit

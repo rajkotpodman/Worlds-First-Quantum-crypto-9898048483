@@ -1,0 +1,44 @@
+name: Web Frontend CI & Verification
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  web-ci:
+    name: Lint, Typecheck & Vite Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci || npm install
+
+      - name: 🔍 TypeScript Strict Typecheck (0 Errors)
+        run: npx tsc --noEmit
+
+      - name: ⚡ Compile Production Frontend Bundle
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 📊 Verify Output Dist Files
+        run: |
+          test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
+          ls -lah dist/
+          ls -lah dist/assets/

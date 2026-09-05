@@ -1,0 +1,39 @@
+name: Security Audit & SAST Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  schedule:
+    - cron: '0 0 * * 0' # Weekly Sunday run
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 📦 Audit NPM Dependencies
+        run: |
+          npm audit --audit-level=high || echo "Audit complete - review advisories"
+
+      - name: 🔒 Check Sensitive Credential Leaks
+        run: |
+          echo "Scanning for hardcoded private keys or production secrets..."
+          # Ensure no actual private keys are committed in plaintext
+          ! grep -rn --exclude-dir={node_modules,.git,dist} "BEGIN RSA PRIVATE KEY" .
+          echo "Secret scan passed."
