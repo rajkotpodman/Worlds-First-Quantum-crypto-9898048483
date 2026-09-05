@@ -1,56 +1,76 @@
 import React, { useState } from 'react';
-import { Fingerprint, Shield, Cpu, Activity, ShieldAlert, Key } from 'lucide-react';
+import { Fingerprint, Shield, Cpu, Activity, ShieldAlert, Key, Sparkles, CheckCircle2, RefreshCw } from 'lucide-react';
+import { 
+  generatePQCKeyPair, 
+  signPayloadPQC, 
+  verifySignaturePQC, 
+  encapsulateSecretKyber,
+  PQCKeyPair,
+  PQCSignatureResult,
+  PQCKemCiphertext
+} from '../crypto/wasm_pqc_bridge';
 
 export const QuantumSignerPanel: React.FC = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Sovereign Genesis Transaction: quantum-safe post-quantum settlement verified.');
   const [signatureData, setSignatureData] = useState<any>(null);
+  const [keyPair, setKeyPair] = useState<PQCKeyPair | null>(null);
+  const [kemResult, setKemResult] = useState<PQCKemCiphertext | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const generateSignature = async (algorithm: 'ML-DSA-87' | 'Falcon-1024') => {
+  const handleGenerateKeypair = async (algo: 'ML-DSA-87' | 'ML-KEM-1024' | 'FALCON-1024') => {
     setLoading(true);
     setError('');
-    setSignatureData(null);
     try {
-      const response = await fetch('/api/v1/quantum/sign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          algorithm, 
-          message: message || 'Default Post-Quantum Message'
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setSignatureData(data);
-        return;
+      const kp = await generatePQCKeyPair(algo);
+      setKeyPair(kp);
+      if (algo === 'ML-KEM-1024') {
+        const kem = await encapsulateSecretKyber(kp.publicKeyHex);
+        setKemResult(kem);
       }
-      throw new Error('Fallback to local PQC engine');
-    } catch (_) {
-      // Local client-side Post-Quantum Cryptographic generator
-      const genRandomHex = (bytes: number) => {
-        const arr = new Uint8Array(bytes);
-        crypto.getRandomValues(arr);
-        return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-      };
-
-      const payload = message || 'Default Post-Quantum Payload (Offline Node)';
-      const mockPqcResult = {
-        algorithm,
-        status: 'SUCCESS',
-        payload_signed: payload,
-        public_key_hex: '04' + genRandomHex(algorithm === 'ML-DSA-87' ? 128 : 96),
-        signature_hex: (algorithm === 'ML-DSA-87' ? '3045022100' : '30440220') + genRandomHex(algorithm === 'ML-DSA-87' ? 2420 : 1280),
-        transaction_id: 'pqc-tx-' + genRandomHex(16),
-        security_level: algorithm === 'ML-DSA-87' ? 'NIST Level 5 (256-bit Post-Quantum Quantum-Resistant)' : 'NIST Level 5 (Compact Falcon Lattice Signature)',
-        timestamp: new Date().toISOString()
-      };
-      setSignatureData(mockPqcResult);
+    } catch (e: any) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const generateSignature = async (algorithm: 'ML-DSA-87' | 'FALCON-1024') => {
+    setLoading(true);
+    setError('');
+    setSignatureData(null);
+    try {
+      const kp = keyPair || await generatePQCKeyPair(algorithm);
+      if (!keyPair) setKeyPair(kp);
+
+      // Execute real WebAssembly-grade PQC signature
+      const sigRes: PQCSignatureResult = await signPayloadPQC(
+        message || 'Default Post-Quantum Payload (Offline Node)',
+        kp.privateKeyHex,
+        algorithm
+      );
+
+      const ver = await verifySignaturePQC(message, sigRes.signatureHex, kp.publicKeyHex);
+
+      const result = {
+        algorithm,
+        status: 'SUCCESS',
+        payload_signed: message || 'Default Post-Quantum Payload (Offline Node)',
+        public_key_hex: kp.publicKeyHex.substring(0, 128) + '... (' + (kp.publicKeyHex.length / 2) + ' bytes)',
+        signature_hex: sigRes.signatureHex.substring(0, 160) + '... (' + (sigRes.signatureHex.length / 2) + ' bytes)',
+        transaction_id: 'pqc-tx-' + sigRes.payloadHash.substring(0, 24),
+        security_level: ver.valid ? `NIST Level 5 (${ver.algorithm} - Verified in ${sigRes.durationMs}ms)` : 'Verification Failed',
+        memory_zeroized: sigRes.memoryZeroized ? 'explicit_bzero zeroized' : 'retained',
+        timestamp: new Date().toISOString()
+      };
+      setSignatureData(result);
+    } catch (err: any) {
+      setError('PQC Bridge Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="bg-gray-900 border border-emerald-900/50 rounded-xl overflow-hidden shadow-lg mb-8">
@@ -82,6 +102,30 @@ export const QuantumSignerPanel: React.FC = () => {
           />
         </div>
 
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handleGenerateKeypair('ML-DSA-87')}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg bg-indigo-950 border border-indigo-700 text-indigo-300 text-xs font-semibold hover:bg-indigo-900 transition"
+          >
+            Gen ML-DSA-87 KeyPair
+          </button>
+          <button
+            onClick={() => handleGenerateKeypair('ML-KEM-1024')}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg bg-emerald-950 border border-emerald-700 text-emerald-300 text-xs font-semibold hover:bg-emerald-900 transition"
+          >
+            Gen ML-KEM-1024 (Kyber)
+          </button>
+          <button
+            onClick={() => handleGenerateKeypair('FALCON-1024')}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg bg-purple-950 border border-purple-700 text-purple-300 text-xs font-semibold hover:bg-purple-900 transition"
+          >
+            Gen FALCON-1024 KeyPair
+          </button>
+        </div>
+
         <div className="flex gap-4">
           <button
             onClick={() => generateSignature('ML-DSA-87')}
@@ -93,7 +137,7 @@ export const QuantumSignerPanel: React.FC = () => {
           </button>
           
           <button
-            onClick={() => generateSignature('Falcon-1024')}
+            onClick={() => generateSignature('FALCON-1024')}
             disabled={loading}
             className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
           >
@@ -101,6 +145,7 @@ export const QuantumSignerPanel: React.FC = () => {
             {loading ? 'Generating...' : 'Test Falcon-1024 Bridge'}
           </button>
         </div>
+
 
         {error && (
           <div className="bg-red-950/30 border border-red-900/50 rounded-lg p-4 flex items-start gap-3">

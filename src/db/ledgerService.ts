@@ -1,3 +1,5 @@
+import { runMigrations } from './migrate';
+
 export interface TransactionItem {
   id: string;
   senderId: string;
@@ -8,6 +10,10 @@ export interface TransactionItem {
   txHash: string;
   status: 'confirmed';
 }
+
+// Auto-run schema migrations on ledger start
+runMigrations().catch(e => console.warn('[Migration] Error:', e));
+
 
 export const fetchBalance = async (userId: string, email?: string): Promise<number> => {
   if (!userId) return 0;

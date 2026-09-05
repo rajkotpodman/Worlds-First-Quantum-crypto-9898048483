@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { fetchBalance, transferTokens, fetchTransactionHistory, TransactionItem } from '../db/ledgerService';
 import { authenticateWebAuthn, registerWebAuthn } from '../lib/webAuthnClient';
+import { generatePQCInvoice, parsePQCInvoice, PQCInvoice } from '../crypto/qrProtocol';
 import { 
   Shield, 
   Copy, 
@@ -16,8 +17,11 @@ import {
   Sparkles,
   Award,
   Lock,
-  Fingerprint
+  Fingerprint,
+  QrCode,
+  FileCheck
 } from 'lucide-react';
+
 
 export const WalletPage: React.FC<{ userEmail: string }> = ({ userEmail }) => {
   const [balance, setBalance] = useState<number>(0);
@@ -32,6 +36,15 @@ export const WalletPage: React.FC<{ userEmail: string }> = ({ userEmail }) => {
   const [history, setHistory] = useState<TransactionItem[]>([]);
   const [isSigning, setIsSigning] = useState<boolean>(false);
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
+
+  // PQC Invoice States
+  const [invoiceAmount, setInvoiceAmount] = useState<string>('50');
+  const [invoiceMemo, setInvoiceMemo] = useState<string>('Sovereign Settlement');
+  const [generatedInvoice, setGeneratedInvoice] = useState<PQCInvoice | null>(null);
+  const [importUri, setImportUri] = useState<string>('');
+  const [parseMsg, setParseMsg] = useState<string | null>(null);
+  const [copiedInv, setCopiedInv] = useState<boolean>(false);
+
 
   const auth = getAuth();
   const isAdmin = (userEmail && userEmail.toLowerCase().trim() === 'india9898048483@gmail.com') || userId.includes('india9898048483') || userId === 'operator_alpha';
@@ -416,6 +429,140 @@ export const WalletPage: React.FC<{ userEmail: string }> = ({ userEmail }) => {
               </tbody>
             </table>
           )}
+        </div>
+      </div>
+
+      {/* Quantum-Resistant PQC Invoice Protocol (BIP-21 Variant) */}
+      <div className="p-6 rounded-2xl bg-slate-900 border border-indigo-500/30 shadow-xl space-y-5">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20">
+              <QrCode className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-base flex items-center gap-2">
+                Quantum-Resistant Invoice & Fountain QR Protocol
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+                  pqc-token://
+                </span>
+              </h3>
+              <p className="text-xs text-slate-400">Generates ML-DSA-87 signed offline invoices & multi-frame fountain animated QR chunks</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Create Invoice Box */}
+          <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-xl space-y-3">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              Generate PQC Invoice
+            </h4>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] text-slate-400 block mb-1">Requested Amount (TOK)</label>
+                <input 
+                  type="text" 
+                  value={invoiceAmount} 
+                  onChange={(e) => setInvoiceAmount(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-slate-200 outline-none focus:border-indigo-500"
+                  placeholder="50"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] text-slate-400 block mb-1">Memo / Purpose</label>
+                <input 
+                  type="text" 
+                  value={invoiceMemo} 
+                  onChange={(e) => setInvoiceMemo(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-slate-200 outline-none focus:border-indigo-500"
+                  placeholder="Security Settlement"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                const inv = generatePQCInvoice(userId || 'default_node_alpha', invoiceAmount || '10', invoiceMemo || 'PQC Settlement');
+                setGeneratedInvoice(inv);
+              }}
+              className="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2"
+            >
+              <QrCode className="w-4 h-4" />
+              Generate PQC Invoice & Fountain QR
+            </button>
+
+            {generatedInvoice && (
+              <div className="p-3 bg-slate-900 rounded-lg border border-slate-700 space-y-2 text-xs font-mono">
+                <div className="flex justify-between items-center text-indigo-400">
+                  <span>Invoice URI:</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedInvoice.uriString);
+                      setCopiedInv(true);
+                      setTimeout(() => setCopiedInv(false), 2000);
+                    }}
+                    className="flex items-center gap-1 text-[10px] text-slate-300 hover:text-white"
+                  >
+                    {copiedInv ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    {copiedInv ? 'Copied' : 'Copy URI'}
+                  </button>
+                </div>
+                <div className="p-2 bg-slate-950 rounded text-[11px] text-slate-300 break-all">
+                  {generatedInvoice.uriString}
+                </div>
+                <div className="text-[10px] text-slate-400 flex justify-between">
+                  <span>Fountain Frames: {generatedInvoice.fountainChunks.length} Chunks</span>
+                  <span>Expires: 1 hour</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Import / Parse Invoice Box */}
+          <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-xl space-y-3">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <FileCheck className="w-3.5 h-3.5 text-emerald-400" />
+              Parse &amp; Settle Invoice URI
+            </h4>
+
+            <div>
+              <label className="text-[11px] text-slate-400 block mb-1">Paste PQC Invoice URI (pqc-token://)</label>
+              <input 
+                type="text" 
+                value={importUri} 
+                onChange={(e) => setImportUri(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-slate-200 outline-none focus:border-emerald-500"
+                placeholder="pqc-token://wallet_abc123?amount=50&memo=Settlement..."
+              />
+            </div>
+
+            <button
+              onClick={() => {
+                const res = parsePQCInvoice(importUri);
+                if (res.valid && res.data) {
+                  setRecipientId(res.data.recipientAddress || '');
+                  setAmount(res.data.tokenAmount || '');
+                  setParseMsg(`Validated Invoice: ${res.data.tokenAmount} TOK for recipient ${res.data.recipientAddress}`);
+                } else {
+                  setParseMsg(`Parse Error: ${res.error}`);
+                }
+              }}
+              className="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-xs transition flex items-center justify-center gap-2"
+            >
+              <Check className="w-4 h-4" />
+              Parse and Populate Transfer
+            </button>
+
+            {parseMsg && (
+              <div className={`p-3 rounded-lg text-xs font-mono ${
+                parseMsg.startsWith('Validated') ? 'bg-emerald-950/50 border border-emerald-800 text-emerald-300' : 'bg-rose-950/50 border border-rose-800 text-rose-300'
+              }`}>
+                {parseMsg}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

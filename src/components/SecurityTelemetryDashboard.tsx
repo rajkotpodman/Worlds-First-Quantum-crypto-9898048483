@@ -29,10 +29,13 @@ import {
 } from 'lucide-react';
 import { TelemetryEventDTO, LogArchiveManifestDTO, TelemetryMetricsDTO } from '../types';
 import { TokenDashboard } from './TokenDashboard';
+import { exportPrometheusMetrics } from '../defi/prometheusTelemetry';
 
 export const SecurityTelemetryDashboard: React.FC = () => {
-  const [activeSubTab, setActiveSubTab] = useState<'live_feed' | 'hash_chain' | 'buffer_metrics' | 'log_archives' | 'python_source' | 'cli_trace' | 'token_management'>('live_feed');
+  const [activeSubTab, setActiveSubTab] = useState<'live_feed' | 'hash_chain' | 'buffer_metrics' | 'log_archives' | 'python_source' | 'cli_trace' | 'token_management' | 'prometheus_metrics'>('live_feed');
   const [notification, setNotification] = useState<{message: string} | null>(null);
+  const [promMetricsText, setPromMetricsText] = useState<string>(exportPrometheusMetrics());
+
 
   // Helper to trigger token minting and notify
   const triggerMint = async (actionType: string) => {
@@ -512,6 +515,20 @@ export const SecurityTelemetryDashboard: React.FC = () => {
           >
             <Wallet className="w-3.5 h-3.5" />
             Token Management
+          </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('prometheus_metrics');
+              setPromMetricsText(exportPrometheusMetrics());
+            }}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2 whitespace-nowrap ${
+              activeSubTab === 'prometheus_metrics'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'bg-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            Prometheus &amp; Grafana Exporter
           </button>
         </div>
       </div>
@@ -1063,6 +1080,41 @@ export const SecurityTelemetryDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* SUB-TAB 7: PROMETHEUS & GRAFANA METRICS EXPORTER */}
+      {activeSubTab === 'prometheus_metrics' && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-xl space-y-4 p-6">
+          <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400 border border-indigo-500/20">
+                <Activity className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
+                  Prometheus Protocol Telemetry Exporter
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+                    /metrics (OpenMetrics Standard)
+                  </span>
+                </h3>
+                <p className="text-xs text-zinc-400">Live operational gauge scrape endpoint for Grafana observability dashboards</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setPromMetricsText(exportPrometheusMetrics())}
+              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Refresh Exporter Metrics
+            </button>
+          </div>
+
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 font-mono text-xs text-emerald-300 overflow-x-auto max-h-[480px]">
+            <pre className="whitespace-pre-wrap">{promMetricsText}</pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

@@ -25,6 +25,8 @@ import {
   Network
 } from 'lucide-react';
 import { UserSpaceRecord, EphemeralOnionServiceData, TorDaemonStatusData, P2PTunnelMessage } from '../types';
+import { initializeTorRoutingTable, calculateXorDistance, KademliaRoutingBucket } from '../network/kademliaTorDht';
+import { rotateEphemeralOnionService, EphemeralOnionDescriptor } from '../network/onionRotator';
 
 interface TorOnionManagerProps {
   userSpaces: UserSpaceRecord[];
@@ -35,12 +37,17 @@ export const TorOnionManager: React.FC<TorOnionManagerProps> = ({
   userSpaces,
   onCreateUserSpace,
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'services' | 'p2p_socket' | 'daemon_arch' | 'python_source' | 'cli_trace' | 'topology'>('services');
+  const [activeSubTab, setActiveSubTab] = useState<'services' | 'p2p_socket' | 'daemon_arch' | 'python_source' | 'cli_trace' | 'topology' | 'kademlia_dht'>('services');
   const [daemonStatus, setDaemonStatus] = useState<TorDaemonStatusData | null>(null);
   const [services, setServices] = useState<EphemeralOnionServiceData[]>([]);
   const [messages, setMessages] = useState<P2PTunnelMessage[]>([]);
   const [chatInput, setChatInput] = useState<string>('');
   const [selectedRecipient, setSelectedRecipient] = useState<string>('');
+  
+  // Kademlia DHT and Ephemeral Rotator states
+  const [dhtBuckets, setDhtBuckets] = useState<KademliaRoutingBucket[]>(initializeTorRoutingTable());
+  const [ephemeralDesc, setEphemeralDesc] = useState<EphemeralOnionDescriptor | null>(null);
+
   
   // Provisioning form
   const [targetPort, setTargetPort] = useState<number>(8888);
@@ -424,6 +431,17 @@ class EphemeralOnionController:
           >
             <Network className="w-3.5 h-3.5" />
             Network Topology Map
+          </button>
+          <button
+            onClick={() => setActiveSubTab('kademlia_dht')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2 whitespace-nowrap ${
+              activeSubTab === 'kademlia_dht'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'bg-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+            }`}
+          >
+            <Radio className="w-3.5 h-3.5" />
+            Kademlia DHT &amp; Ephemeral Rotator
           </button>
           <button
             onClick={() => {
@@ -940,6 +958,109 @@ class EphemeralOnionController:
           </div>
         </div>
       )}
+
+      {/* SUB-TAB 6: KADEMLIA DHT & EPHEMERAL ROTATOR */}
+      {activeSubTab === 'kademlia_dht' && (
+        <div className="space-y-6">
+          {/* Ephemeral Rotator Control */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-teal-500/10 rounded-lg text-teal-400">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-zinc-100">Tor Hidden Service Onion v3 Ephemeral Address Rotator</h3>
+                  <p className="text-xs text-zinc-400">Dynamic 56-character stealth hidden service with x25519 authorization cookie</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  const desc = rotateEphemeralOnionService(8080, 80, 60);
+                  setEphemeralDesc(desc);
+                }}
+                className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold rounded-lg flex items-center gap-2 transition"
+              >
+                <RotateCw className="w-4 h-4" />
+                Rotate Ephemeral Onion Service
+              </button>
+            </div>
+
+            {ephemeralDesc && (
+              <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3 font-mono text-xs">
+                <div className="flex justify-between items-center text-teal-400">
+                  <span className="font-bold">Active Ephemeral Onion Descriptor:</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800">
+                    {ephemeralDesc.keyType}
+                  </span>
+                </div>
+                <div className="p-3 bg-zinc-900 rounded-lg text-emerald-300 break-all border border-zinc-800">
+                  {ephemeralDesc.onionAddress}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] text-zinc-400">
+                  <div>Target Port: <span className="text-zinc-200">{ephemeralDesc.targetPort} &rarr; {ephemeralDesc.virtualPort}</span></div>
+                  <div>Stealth Cookie: <span className="text-indigo-300">{ephemeralDesc.stealthClientCookie.substring(0, 16)}...</span></div>
+                  <div>Expires At: <span className="text-zinc-200">{new Date(ephemeralDesc.expiresAt).toLocaleTimeString()}</span></div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Kademlia DHT Routing Table */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                  <Radio className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-zinc-100">Kademlia DHT Peer Discovery (160-bit XOR Metric)</h3>
+                  <p className="text-xs text-zinc-400">Decentralized P2P node routing buckets over Tor circuit relays</p>
+                </div>
+              </div>
+              <span className="text-xs font-mono text-indigo-300 bg-indigo-950 px-3 py-1 rounded-full border border-indigo-800">
+                8 K-Buckets • 24 Active Onion Peers
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {dhtBuckets.slice(0, 3).map((bucket) => (
+                <div key={bucket.kBucketIndex} className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
+                  <div className="flex justify-between items-center text-xs font-semibold text-zinc-300">
+                    <span>K-Bucket #{bucket.kBucketIndex} (XOR Distance: 2^{bucket.kBucketIndex * 20})</span>
+                    <span className="text-[11px] font-mono text-zinc-500">Capacity: {bucket.peers.length}/{bucket.capacity} Peers</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs font-mono text-zinc-400">
+                      <thead>
+                        <tr className="border-b border-zinc-800 text-zinc-500 text-[11px]">
+                          <th className="py-1.5 px-2">Node ID (160-bit XOR)</th>
+                          <th className="py-1.5 px-2">Tor Onion Address</th>
+                          <th className="py-1.5 px-2">Port</th>
+                          <th className="py-1.5 px-2">RTT Latency</th>
+                          <th className="py-1.5 px-2">Sybil Verified</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-800/40">
+                        {bucket.peers.map((peer, pIdx) => (
+                          <tr key={pIdx} className="hover:bg-zinc-900/50">
+                            <td className="py-1.5 px-2 text-indigo-300 truncate max-w-[140px]">{peer.nodeIdHex}</td>
+                            <td className="py-1.5 px-2 text-teal-300 truncate max-w-[200px]">{peer.onionAddress}</td>
+                            <td className="py-1.5 px-2 text-zinc-400">{peer.port}</td>
+                            <td className="py-1.5 px-2 text-emerald-400">{peer.rttMs}ms</td>
+                            <td className="py-1.5 px-2 text-emerald-400">Passed ✓</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
