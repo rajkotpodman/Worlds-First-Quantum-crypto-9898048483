@@ -80,23 +80,25 @@ export const AndroidArtifactCard: React.FC<AndroidArtifactCardProps> = ({
             </button>
 
             <a
-              id="download-release-apk-btn"
-              href="/api/dist/download/app-release.apk"
-              download="app-release.apk"
+              id="download-debug-apk-btn"
+              href="https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/releases"
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-emerald-900/40 transition-all cursor-pointer"
             >
               <Download className="h-4 w-4" />
-              <span>Download 216MB Clean Installable APK</span>
+              <span>Download debug.apk (6.51 MB)</span>
             </a>
 
             <a
-              id="download-hybrid-apk-btn"
-              href="/api/dist/download/app-hybrid-release.apk"
-              download="app-hybrid-release.apk"
+              id="download-github-release-btn"
+              href="https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/releases/tag/v1.0.0"
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
             >
-              <Download className="h-4 w-4 text-purple-400" />
-              <span>Hybrid Mirror (216MB)</span>
+              <ExternalLink className="h-4 w-4 text-emerald-400" />
+              <span>GitHub v1.0.0 Release</span>
             </a>
           </div>
         </div>
