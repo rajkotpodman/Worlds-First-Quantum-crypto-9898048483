@@ -1,0 +1,28 @@
+================================================================================
+          AI SECURE SPACE & SOVEREIGN NODE — REWARD POLICY (2026-2030)
+================================================================================
+
+1. OVERVIEW
+Tokens (TOK) within the AI Secure Space ecosystem represent sovereign compute 
+and participation units. Users earn tokens purely through verifiable actions:
+compiling Android packages, maintaining network security, and validating blocks.
+
+2. REWARD SCHEDULE
+--------------------------------------------------------------------------------
+Action Type                            | Reward (TOK) | Cooldown
+--------------------------------------------------------------------------------
+1. Android APK Build (Clean CI/CD)     | +50.0000 TOK | Instant on success
+2. NIST L5 Quantum Verification        | +25.0000 TOK | 15 minutes
+3. Biometric Device Registration       | +100.0000 TOK| One-time / device
+4. Tor Onion v3 Relay Node Uptime      | +10.0000 TOK | Hourly
+5. Welcome / New Node Registration     | +1,000.0000TOK| Once per identity
+
+3. INTEGRITY & ANTI-ABUSE
+All mint actions are checked against local cryptographic proof logs and server-side
+audit trails. Negative balances and automated bot farming are blocked via hardware
+enclave attestation (StrongBox) and adaptive behavioral entropy scoring.
+
+4. MASTER SETTLEMENT
+51% Network Stake Reserve: india9898048483@gmail.com (+91 9898048483)
+Official Store: https://wa.me/c/919898048483
+================================================================================

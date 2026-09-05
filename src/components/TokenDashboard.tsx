@@ -12,9 +12,35 @@ export const TokenDashboard: React.FC<TokenDashboardProps> = ({ userId }) => {
   const [policyText, setPolicyText] = useState('');
 
   const loadPolicy = async () => {
-    const res = await fetch('/static/token-policy.txt');
-    const text = await res.text();
-    setPolicyText(text);
+    try {
+      const res = await fetch('/static/token-policy.txt');
+      if (res.ok) {
+        const text = await res.text();
+        setPolicyText(text);
+        setShowPolicy(true);
+        return;
+      }
+    } catch {
+      // Offline fallback
+    }
+    setPolicyText(`================================================================================
+          AI SECURE SPACE & SOVEREIGN NODE — REWARD POLICY (2026-2030)
+================================================================================
+
+1. OVERVIEW
+Tokens (TOK) within the AI Secure Space ecosystem represent sovereign compute 
+and participation units. Users earn tokens purely through verifiable actions.
+
+2. REWARD SCHEDULE
+- Android APK Build (Clean CI/CD): +50.0000 TOK
+- NIST L5 Quantum Verification:    +25.0000 TOK
+- Biometric Device Registration:   +100.0000 TOK
+- Welcome / New Node Registration: +1,000.0000 TOK
+
+3. SETTLEMENT & LIQUIDITY
+Master Stake: india9898048483@gmail.com (+91 9898048483)
+Official Store: https://wa.me/c/919898048483
+================================================================================`);
     setShowPolicy(true);
   };
 

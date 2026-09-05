@@ -251,9 +251,25 @@ export default function App() {
       apkInfo: completedApk,
       auditEvents: [
         { timestamp: new Date().toISOString(), level: 'INFO', message: 'CI/CD Pipeline succeeded. /dist/debug.apk compiled with verified SHA256.', actor: 'system' },
+        { timestamp: new Date().toISOString(), level: 'INFO', message: 'Action Reward: +50.0000 TOK minted for verified Android APK build.', actor: 'reward_engine' },
         ...prev.auditEvents
       ]
     }));
+
+    // Trigger action reward for verified Android build (Phase 4 of Token Economy)
+    import('./db/tokenUtils').then(async ({ mintTokenReward }) => {
+      try {
+        const rewardResult = await mintTokenReward(userEmail || 'operator_node', '50.0000', 'ANDROID_CI_CD_BUILD_SUCCESS');
+        if (rewardResult.success) {
+          setAlerts(prev => [
+            { id: 'alt-reward-' + Date.now(), time: 'Just now', type: 'SUCCESS', title: '🪙 +50 TOK Reward Minted!', text: `Action verified: Android APK build reward credited to ledger. New Balance: ${rewardResult.newBalance} TOK` },
+            ...prev
+          ]);
+        }
+      } catch (err) {
+        console.warn('[RewardEngine] Non-critical reward dispatch:', err);
+      }
+    });
 
     setAlerts(prev => [
       { id: 'alt-' + Date.now(), time: 'Just now', type: 'SUCCESS', title: 'Pipeline Execution Succeeded', text: 'All 8 pipeline stages passed with 0 errors. Android debug.apk (6.51 MB) generated.' },

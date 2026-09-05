@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { History } from 'lucide-react';
+import { fetchTransactionHistory } from '../db/tokenUtils';
 
 interface Transaction {
   id: string;
   amount: string;
   type: 'mint' | 'spend';
+  actionType?: string;
   timestamp: string;
+  proofHash?: string;
 }
 
 interface TokenTransactionHistoryProps {
@@ -15,13 +18,30 @@ interface TokenTransactionHistoryProps {
 export const TokenTransactionHistory: React.FC<TokenTransactionHistoryProps> = ({ userId }) => {
   const [history, setHistory] = useState<Transaction[]>([]);
   
+  const loadHistory = async () => {
+    try {
+      const res = await fetch(`/api/tokens/history?userId=${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.history && data.history.length > 0) {
+          setHistory(data.history);
+          return;
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    try {
+      const localHistory = await fetchTransactionHistory(userId, 20);
+      setHistory(localHistory as Transaction[]);
+    } catch (e) {
+      console.error('[TokenTransactionHistory] Error loading history:', e);
+    }
+  };
+
   useEffect(() => {
-    fetch(`/api/tokens/history?userId=${userId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.history) setHistory(data.history);
-    })
-    .catch(err => console.error('Failed to fetch history:', err));
+    loadHistory();
   }, [userId]);
 
   return (

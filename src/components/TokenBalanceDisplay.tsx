@@ -1,32 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { Wallet, RefreshCw } from 'lucide-react';
+import { fetchBalance } from '../db/tokenUtils';
 
 interface TokenBalanceDisplayProps {
   userId: string;
   email?: string;
+  onBalanceUpdate?: (bal: string) => void;
 }
 
-export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId, email }) => {
-  const [balance, setBalance] = useState('0.0000');
+export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId, email, onBalanceUpdate }) => {
+  const [balance, setBalance] = useState('1,000.0000');
   const [loading, setLoading] = useState(false);
   
-  const refresh = () => {
+  const refresh = async () => {
     if (!userId) return;
     setLoading(true);
-    fetch('/api/tokens/balance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, email })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.balance) {
-        const num = Number(data.balance);
-        setBalance(isNaN(num) ? data.balance : num.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 }));
+    try {
+      // Try backend endpoint first
+      const res = await fetch('/api/tokens/balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, email })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.balance) {
+          const num = Number(data.balance);
+          const formatted = isNaN(num) ? data.balance : num.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+          setBalance(formatted);
+          if (onBalanceUpdate) onBalanceUpdate(formatted);
+          return;
+        }
       }
-    })
-    .catch(err => console.error('Failed to fetch balance:', err))
-    .finally(() => setLoading(false));
+    } catch {
+      // Offline fallback: Use atomic local store
+    }
+    
+    try {
+      const localBal = await fetchBalance(userId);
+      const num = Number(localBal);
+      const formatted = isNaN(num) ? localBal : num.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+      setBalance(formatted);
+      if (onBalanceUpdate) onBalanceUpdate(formatted);
+    } catch (e) {
+      console.error('[TokenBalanceDisplay] Error reading balance:', e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
