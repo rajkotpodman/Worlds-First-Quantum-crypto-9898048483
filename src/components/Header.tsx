@@ -20,7 +20,11 @@ import {
   BatteryMedium,
   Server,
   Award,
-  Wallet
+  Wallet,
+  ArrowDownUp,
+  KeyRound,
+  Radio,
+  Droplet
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -42,6 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const tabs = [
     { id: 'wallet', label: 'Wallet', icon: Wallet },
+    { id: 'amm_swap', label: 'Shielded AMM Swap', icon: ArrowDownUp, highlight: true },
+    { id: 'shamir_backup', label: 'Shamir 3-of-5 Backup', icon: KeyRound, highlight: true },
+    { id: 'mesh_radar', label: 'Air-Gapped Mesh Radar', icon: Radio, highlight: true },
+    { id: 'token_faucet', label: 'Argon2id PoW Faucet', icon: Droplet, highlight: true },
     { id: 'pipeline', label: 'CI/CD Pipeline', icon: Terminal, badge: pipelineRunning ? 'Building' : null },
     { id: 'node_heatmap', label: 'Prompt 139: Global Node Heatmap (3D)', icon: Globe, highlight: true },
     { id: 'valuation_2030', label: '2026–2030 $1.00 USD Road (AI Aayush Inst)', icon: Award, highlight: true },

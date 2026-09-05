@@ -25,6 +25,10 @@ import { LocalAiNlpEngine } from './components/LocalAiNlpEngine';
 import { FastApiMicroBackend } from './components/FastApiMicroBackend';
 import { InstitutionalValuationPortal } from './components/InstitutionalValuationPortal';
 import { GlobalNodeHeatmap } from './components/GlobalNodeHeatmap';
+import { AmmSwapPanel } from './components/AmmSwapPanel';
+import { ShamirRecoveryWizard } from './components/ShamirRecoveryWizard';
+import { AirGappedMeshRadar } from './components/AirGappedMeshRadar';
+import { TokenFaucetPanel } from './components/TokenFaucetPanel';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
 
 
@@ -498,6 +502,22 @@ export default function App() {
             loading={loading}
             onNavigateToArtifacts={() => setActiveTab('artifacts')}
           />
+        )}
+
+        {activeTab === 'amm_swap' && (
+          <AmmSwapPanel userId={userEmail || 'operator_node'} />
+        )}
+
+        {activeTab === 'shamir_backup' && (
+          <ShamirRecoveryWizard />
+        )}
+
+        {activeTab === 'mesh_radar' && (
+          <AirGappedMeshRadar />
+        )}
+
+        {activeTab === 'token_faucet' && (
+          <TokenFaucetPanel userId={userEmail || 'operator_node'} />
         )}
 
         {activeTab === 'node_heatmap' && (
