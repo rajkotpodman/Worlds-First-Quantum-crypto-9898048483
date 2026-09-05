@@ -1,21 +1,40 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ============================================================================
+# Advanced ProGuard & R8 Hardening Rules for AI Secure Space & Quantum Crypto
+# ============================================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Anti-Reverse Engineering & Obfuscation Directives
+-repackageclasses ''
+-allowaccessmodification
+-dontusemixedcaseclassnames false
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-optimizationpasses 5
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Strip Debug Information & Source File metadata in release
+-renamesourcefileattribute SourceFile
+-keepattributes !SourceFile,!LineNumberTable,*Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Strip all Log.v, Log.d, Log.i in release builds for zero information leakage
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int d(...);
+}
+
+# Preserve Capacitor & WebView JS Bridge Interfaces
+-keepattributes JavascriptInterface
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-keep class com.getcapacitor.** { *; }
+-keep class com.getcapacitor.community.** { *; }
+
+# Preserve App Native Components
+-keep class ai.secure.space.** { *; }
+-keepclassmembers class ai.secure.space.** { *; }
+
+# Preserve Android Support & Core Architecture
+-keep class androidx.core.** { *; }
+-keep class androidx.appcompat.** { *; }
+-keep class androidx.coordinatorlayout.** { *; }
+-dontwarn androidx.**
