@@ -33,6 +33,7 @@ import { ZkpProofGeneratorPanel } from './components/ZkpProofGeneratorPanel';
 import { QkdEntanglementNetworkPanel } from './components/QkdEntanglementNetworkPanel';
 import { PythonRuntimeConsole } from './components/PythonRuntimeConsole';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
+import { Globe, Terminal, Smartphone, Wallet, ArrowDownUp, EyeOff } from 'lucide-react';
 
 
 export default function App() {
@@ -490,7 +491,136 @@ export default function App() {
       />
 
       {/* Main View Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Executive Command Dock */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <button
+            id="dock-btn-heatmap"
+            onClick={() => setActiveTab('node_heatmap')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'node_heatmap'
+                ? 'bg-cyan-950/50 border-cyan-500/70 shadow-lg shadow-cyan-950/60 ring-1 ring-cyan-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Globe className="w-5 h-5 text-cyan-400 group-hover:animate-[spin_6s_linear_infinite]" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100 flex items-center gap-1">
+                3D Globe Heatmap
+              </div>
+              <div className="text-[10px] text-cyan-400/80 font-mono">Rotating Mesh</div>
+            </div>
+          </button>
+
+          <button
+            id="dock-btn-pipeline"
+            onClick={() => setActiveTab('pipeline')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'pipeline'
+                ? 'bg-emerald-950/50 border-emerald-500/70 shadow-lg shadow-emerald-950/60 ring-1 ring-emerald-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Terminal className="w-5 h-5 text-emerald-400" />
+              {pipeline.status === 'running' ? (
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono animate-pulse">
+                  RUNNING
+                </span>
+              ) : (
+                <span className="text-[9px] text-emerald-400 font-mono">READY</span>
+              )}
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">CI/CD Pipeline</div>
+              <div className="text-[10px] text-slate-400 font-mono">0-Sudo /dist Engine</div>
+            </div>
+          </button>
+
+          <button
+            id="dock-btn-wallet"
+            onClick={() => setActiveTab('wallet')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'wallet'
+                ? 'bg-indigo-950/50 border-indigo-500/70 shadow-lg shadow-indigo-950/60 ring-1 ring-indigo-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Wallet className="w-5 h-5 text-indigo-400" />
+              <span className="text-[10px] font-mono text-indigo-300 font-bold">{balance.toLocaleString()} 9898</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">Sovereign Wallet</div>
+              <div className="text-[10px] text-indigo-400/80 font-mono">PQC Ledger</div>
+            </div>
+          </button>
+
+          <button
+            id="dock-btn-amm"
+            onClick={() => setActiveTab('amm_swap')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'amm_swap'
+                ? 'bg-amber-950/50 border-amber-500/70 shadow-lg shadow-amber-950/60 ring-1 ring-amber-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <ArrowDownUp className="w-5 h-5 text-amber-400" />
+              <span className="text-[10px] font-mono text-amber-300">0.3% Pool</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">Shielded AMM</div>
+              <div className="text-[10px] text-amber-400/80 font-mono">Swap Engine</div>
+            </div>
+          </button>
+
+          <button
+            id="dock-btn-zkp"
+            onClick={() => setActiveTab('zkp_proofs')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'zkp_proofs'
+                ? 'bg-fuchsia-950/50 border-fuchsia-500/70 shadow-lg shadow-fuchsia-950/60 ring-1 ring-fuchsia-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <EyeOff className="w-5 h-5 text-fuchsia-400" />
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300 font-mono">
+                BN128
+              </span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">Zero-Knowledge</div>
+              <div className="text-[10px] text-fuchsia-400/80 font-mono">Groth16 ZKP</div>
+            </div>
+          </button>
+
+          <button
+            id="dock-btn-artifacts"
+            onClick={() => setActiveTab('artifacts')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'artifacts'
+                ? 'bg-emerald-950/50 border-emerald-500/70 shadow-lg shadow-emerald-950/60 ring-1 ring-emerald-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Smartphone className="w-5 h-5 text-emerald-400" />
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+                5.2 MB
+              </span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">Android APK</div>
+              <div className="text-[10px] text-emerald-400/80 font-mono">Signed Binary</div>
+            </div>
+          </button>
+        </div>
+
         {activeTab === 'wallet' && (
           <div className="space-y-6">
             <QuantumSignerPanel />
