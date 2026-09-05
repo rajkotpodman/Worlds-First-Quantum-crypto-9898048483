@@ -50,6 +50,9 @@ jobs:
       - name: 🛠️ Build Android Debug & Release APKs
         run: |
           cd android
+          if [ ! -f app/release.keystore ]; then
+            keytool -genkeypair -v -keystore app/release.keystore -alias aisecurespace -keyalg RSA -keysize 2048 -validity 10000 -storepass password123 -keypass password123 -dname "CN=Aayush, OU=Security, O=SovereignNode, L=Rajkot, ST=Gujarat, C=IN"
+          fi
           chmod +x gradlew
           ./gradlew assembleDebug assembleRelease -x lint -x lintVitalRelease --no-daemon
 
