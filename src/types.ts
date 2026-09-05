@@ -6,17 +6,17 @@ export interface PipelineStep {
 }
 
 export interface ApkBuildManifest {
-  artifact: string;
-  path: string;
-  buildId: string;
+  artifact?: string;
+  path?: string;
+  buildId?: string;
   version: string;
   packageName: string;
-  builtAt: string;
+  builtAt?: string;
   targetSdk: number;
   minSdk: number;
   permissions: string[];
-  features: string[];
-  pipelineMetadata: {
+  features?: string[];
+  pipelineMetadata?: {
     ciRunner: string;
     sudoRequired: boolean;
     integrityPassed: boolean;
@@ -25,13 +25,16 @@ export interface ApkBuildManifest {
 }
 
 export interface ApkInfo {
-  success: boolean;
-  artifactPath: string;
-  fullPath: string;
-  size: number;
-  sha256: string;
-  buildId: string;
-  manifest: ApkBuildManifest;
+  success?: boolean;
+  artifactPath?: string;
+  fullPath?: string;
+  size?: number;
+  sha256?: string;
+  sha512?: string;
+  buildId?: string;
+  name?: string;
+  createdAt?: string;
+  manifest?: ApkBuildManifest;
 }
 
 export interface AuditEvent {
@@ -162,16 +165,19 @@ export interface AdaptiveKeyResult {
 }
 
 export interface EphemeralOnionServiceData {
-  serviceId: string;
+  serviceId?: string;
+  id?: string;
   onionAddress: string;
-  keyType: string;
+  keyType?: string;
   localTargetPort: number;
   virtualPort: number;
   createdAt: string;
-  expiresAt: string;
+  expiresAt?: string;
   expiresInSeconds: number;
   isActive: boolean;
-  circuitsEstablished: number;
+  circuitsEstablished?: number;
+  rotationIntervalMinutes?: number;
+  ephemeralPrivateKey?: string;
 }
 
 export interface TorDaemonStatusData {
@@ -199,11 +205,13 @@ export interface P2PTunnelMessage {
   id: string;
   senderOnion: string;
   recipientOnion: string;
-  encryptedBytes: number;
-  payloadType: string;
-  hmacVerified: boolean;
+  encryptedBytes?: number;
+  payloadType?: string;
+  hmacVerified?: boolean;
   text: string;
   timestamp: string;
+  direction?: 'inbound' | 'outbound' | 'sent' | 'received';
+  pqcEncrypted?: boolean;
 }
 
 export interface HardwareAttestationInfo {
@@ -240,17 +248,20 @@ export interface MLKitFaceScanResult {
 export interface VaultPartitionInfo {
   partitionId: string;
   tenantId: string;
-  tier: 'STANDARD' | 'DENIABLE_DECOY' | 'DENIABLE_HIDDEN_VAULT';
+  tier?: 'STANDARD' | 'DENIABLE_DECOY' | 'DENIABLE_HIDDEN_VAULT';
   mountPoint: string;
-  saltHex: string;
+  saltHex?: string;
   kdfIterations: number;
   onionAddress: string;
-  status: 'UNMOUNTED' | 'MOUNTED' | 'SHREDDED';
+  status?: 'UNMOUNTED' | 'MOUNTED' | 'SHREDDED';
   fileCount: number;
-  totalBytes: number;
+  totalBytes?: number;
+  totalSizeBytes?: number;
   createdAt: string;
   lastMountedAt?: string;
   decoyPairedId?: string;
+  isMounted?: boolean;
+  isDeniableDecoy?: boolean;
 }
 
 export interface VaultFileItem {
@@ -259,8 +270,9 @@ export interface VaultFileItem {
   sha256Checksum: string;
   contentType: string;
   createdAt: string;
-  modifiedAt: string;
+  modifiedAt?: string;
   isEncrypted?: boolean;
+  encryptedTokenPreview?: string;
 }
 
 export interface DuressSecurityProfileDTO {
@@ -277,14 +289,19 @@ export interface DuressSecurityProfileDTO {
 export interface PanicExecutionAuditDTO {
   id: string;
   timestamp: string;
-  triggerSource: string;
-  severity: 'STANDARD_AUTH' | 'DECOY_AUTH' | 'PANIC_MEMORY_WIPE' | 'PANIC_FULL_SHRED';
-  memoryKeysZeroized: number;
-  storageFilesShredded: number;
-  totalBytesShredded: number;
-  torBeaconDispatched: boolean;
-  status: string;
-  durationMs: number;
+  triggerSource?: string;
+  severity?: 'STANDARD_AUTH' | 'DECOY_AUTH' | 'PANIC_MEMORY_WIPE' | 'PANIC_FULL_SHRED';
+  memoryKeysZeroized?: number;
+  storageFilesShredded?: number;
+  totalBytesShredded?: number;
+  torBeaconDispatched?: boolean;
+  status?: string;
+  durationMs?: number;
+  userId?: string;
+  triggerType?: string;
+  actionTaken?: string;
+  zeroizationPattern?: string;
+  details?: string;
 }
 
 export interface LocaleMetaDTO {
