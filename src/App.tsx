@@ -30,6 +30,7 @@ import { ShamirRecoveryWizard } from './components/ShamirRecoveryWizard';
 import { AirGappedMeshRadar } from './components/AirGappedMeshRadar';
 import { TokenFaucetPanel } from './components/TokenFaucetPanel';
 import { ZkpProofGeneratorPanel } from './components/ZkpProofGeneratorPanel';
+import { QkdEntanglementNetworkPanel } from './components/QkdEntanglementNetworkPanel';
 import { PythonRuntimeConsole } from './components/PythonRuntimeConsole';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
 
@@ -508,6 +509,10 @@ export default function App() {
 
         {activeTab === 'zkp_proofs' && (
           <ZkpProofGeneratorPanel />
+        )}
+
+        {activeTab === 'qkd_mesh' && (
+          <QkdEntanglementNetworkPanel />
         )}
 
         {activeTab === 'python_console' && (

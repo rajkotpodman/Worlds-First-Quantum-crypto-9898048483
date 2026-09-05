@@ -48,6 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
   const tabs = [
     { id: 'wallet', label: 'Wallet', icon: Wallet },
     { id: 'zkp_proofs', label: 'Zero-Knowledge Proofs', icon: EyeOff, highlight: true },
+    { id: 'qkd_mesh', label: 'QKD BB84 Entanglement', icon: Radio, highlight: true },
     { id: 'python_console', label: 'Embedded Python REPL', icon: Terminal, highlight: true },
     { id: 'amm_swap', label: 'Shielded AMM Swap', icon: ArrowDownUp, highlight: true },
     { id: 'shamir_backup', label: 'Shamir 3-of-5 Backup', icon: KeyRound, highlight: true },
