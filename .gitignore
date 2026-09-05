@@ -27,4 +27,6 @@ android/*.iml
 android/app/*.iml
 android_sdk/
 jdk-*/
+*.keystore
+*.jks
 

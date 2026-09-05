@@ -29,6 +29,8 @@ import { AmmSwapPanel } from './components/AmmSwapPanel';
 import { ShamirRecoveryWizard } from './components/ShamirRecoveryWizard';
 import { AirGappedMeshRadar } from './components/AirGappedMeshRadar';
 import { TokenFaucetPanel } from './components/TokenFaucetPanel';
+import { ZkpProofGeneratorPanel } from './components/ZkpProofGeneratorPanel';
+import { PythonRuntimeConsole } from './components/PythonRuntimeConsole';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
 
 
@@ -502,6 +504,14 @@ export default function App() {
             loading={loading}
             onNavigateToArtifacts={() => setActiveTab('artifacts')}
           />
+        )}
+
+        {activeTab === 'zkp_proofs' && (
+          <ZkpProofGeneratorPanel />
+        )}
+
+        {activeTab === 'python_console' && (
+          <PythonRuntimeConsole />
         )}
 
         {activeTab === 'amm_swap' && (
