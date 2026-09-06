@@ -38,7 +38,7 @@ jobs:
       - name: 📦 Install Node & Python Dependencies
         run: |
           npm ci || npm install
-          pip install pycdlib pillow pytest
+          pip install pycdlib pillow pytest pytest-asyncio httpx numpy pycryptodome cryptography
 
       - name: 🔍 TypeScript Strict Typecheck (0 Errors)
         run: npm run lint
@@ -58,6 +58,8 @@ jobs:
 
       - name: 🛡️ Verify macOS Bundle Structure & Executable Permissions
         run: |
+          echo "Setting launcher executable permissions..."
+          chmod +x "dist/AI Secure Space.app/Contents/MacOS/AI Secure Space"
           echo "Verifying Info.plist..."
           test -f "dist/AI Secure Space.app/Contents/Info.plist"
           echo "Verifying App Launcher..."

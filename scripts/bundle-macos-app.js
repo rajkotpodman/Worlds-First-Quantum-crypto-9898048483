@@ -358,7 +358,10 @@ echo "AI Secure Space launched successfully." >> "$LOG_FILE"
 exit 0
 `;
   const executablePath = path.join(macOSDir, 'AI Secure Space');
-  fs.writeFileSync(executablePath, launcherScript.replace(/\r\n/g, '\n'), 'utf-8');
+  fs.writeFileSync(executablePath, launcherScript.replace(/\r\n/g, '\n'), { encoding: 'utf-8', mode: 0o755 });
+  try {
+    fs.chmodSync(executablePath, 0o755);
+  } catch (ignored) {}
 
   // D. Copy app.icns
   fs.copyFileSync(tempIcnsPath, path.join(resourcesDir, 'app.icns'));
@@ -400,6 +403,10 @@ exit 0
     fs.rmSync(targetAppDist, { recursive: true, force: true });
   }
   fs.cpSync(appBundleDir, targetAppDist, { recursive: true });
+  const distExecPath = path.join(targetAppDist, 'Contents', 'MacOS', 'AI Secure Space');
+  try {
+    fs.chmodSync(distExecPath, 0o755);
+  } catch (ignored) {}
 
   // G. Packaging Universal ZIP Distribution Archive
   console.log('[6/6] Packaging Universal ZIP Archive and Apple Disk Image (.dmg)...');

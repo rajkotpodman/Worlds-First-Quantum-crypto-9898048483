@@ -85,7 +85,7 @@ class ChaosLoadTester:
         faulty_nodes_count: int = 3,
         packet_loss_rate: float = 0.33,
     ) -> Dict[str, Any]:
-        """
+        r"""
         Simulates network partition and Byzantine node stalls.
         Verifies consensus safety invariant $n \ge 3f + 1$.
         """

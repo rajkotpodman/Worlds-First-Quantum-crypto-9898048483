@@ -44,7 +44,7 @@ jobs:
       - name: 📦 Install Node & Python Dependencies
         run: |
           npm ci || npm install
-          pip install pytest pycdlib || true
+          pip install pytest pytest-asyncio httpx numpy pycryptodome cryptography pydantic fastapi pycdlib || true
 
       - name: 🔍 TypeScript Strict Typecheck (0 Errors)
         run: npm run lint
