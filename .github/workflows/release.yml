@@ -43,7 +43,7 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           npm ci || npm install
-          pip install pytest pytest-asyncio httpx numpy pycryptodome cryptography pydantic fastapi pycdlib || true
+          pip install pytest pytest-asyncio httpx numpy pycryptodome cryptography pydantic fastapi sqlalchemy pycdlib || true
 
       - name: ⚡ Build Web Assets
         run: npm run build
@@ -93,7 +93,7 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           npm ci || npm install
-          pip install pycdlib pillow pytest pytest-asyncio httpx numpy pycryptodome cryptography
+          pip install pycdlib pillow pytest pytest-asyncio httpx numpy pycryptodome cryptography sqlalchemy
 
       - name: ⚡ Build Web Assets
         run: npm run build

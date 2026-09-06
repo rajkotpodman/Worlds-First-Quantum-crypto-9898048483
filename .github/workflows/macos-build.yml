@@ -38,7 +38,7 @@ jobs:
       - name: 📦 Install Node & Python Dependencies
         run: |
           npm ci || npm install
-          pip install pycdlib pillow pytest pytest-asyncio httpx numpy pycryptodome cryptography
+          pip install pycdlib pillow pytest pytest-asyncio httpx numpy pycryptodome cryptography sqlalchemy
 
       - name: 🔍 TypeScript Strict Typecheck (0 Errors)
         run: npm run lint
@@ -65,7 +65,7 @@ jobs:
           echo "Verifying App Launcher..."
           test -x "dist/AI Secure Space.app/Contents/MacOS/AI Secure Space"
           echo "Verifying App Icon..."
-          test -f "dist/AI Secure Space.app/Contents/Resources/AppIcon.icns"
+          test -f "dist/AI Secure Space.app/Contents/Resources/app.icns" || test -f "dist/AI Secure Space.app/Contents/Resources/AppIcon.icns"
           echo "Testing DMG mountability on macOS kernel..."
           hdiutil attach -nobrowse "dist/AI-Secure-Space-macOS.dmg" -mountpoint /tmp/aisecurespace_mount
           ls -la /tmp/aisecurespace_mount

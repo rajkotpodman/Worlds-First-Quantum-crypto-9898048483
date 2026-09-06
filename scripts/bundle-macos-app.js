@@ -363,8 +363,9 @@ exit 0
     fs.chmodSync(executablePath, 0o755);
   } catch (ignored) {}
 
-  // D. Copy app.icns
+  // D. Copy app.icns (and AppIcon.icns for standard asset catalog compatibility)
   fs.copyFileSync(tempIcnsPath, path.join(resourcesDir, 'app.icns'));
+  fs.copyFileSync(tempIcnsPath, path.join(resourcesDir, 'AppIcon.icns'));
 
   // E. Stage Web Distribution Assets
   function copyRec(src, dest) {

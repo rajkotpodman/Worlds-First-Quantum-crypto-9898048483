@@ -38,7 +38,7 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           npm ci || npm install
-          pip install pytest pytest-asyncio httpx numpy pycryptodome cryptography pydantic fastapi pycdlib
+          pip install pytest pytest-asyncio httpx numpy pycryptodome cryptography pydantic fastapi sqlalchemy pycdlib
 
       - name: 🛡️ Verify ZK Verification Keys & Circom Artifacts
         run: |
@@ -53,5 +53,7 @@ jobs:
         run: npm run lint
 
       - name: 🧪 Run Comprehensive Cryptographic & Token System Test Suite (330+ Tests)
+        env:
+          PYTHONPATH: .
         run: |
           python -m pytest tests/test_token_system.py -v
