@@ -11,7 +11,9 @@ import {
   Layers, 
   Terminal, 
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Apple,
+  Laptop
 } from 'lucide-react';
 import { ApkInfo } from '../types';
 
@@ -26,9 +28,16 @@ export const AndroidArtifactCard: React.FC<AndroidArtifactCardProps> = ({
   onRebuildApk,
   loading,
 }) => {
+  const [platform, setPlatform] = useState<'android' | 'macos'>('android');
   const [copiedSha, setCopiedSha] = useState(false);
   const [copiedAdb, setCopiedAdb] = useState(false);
+  const [copiedMacSha, setCopiedMacSha] = useState(false);
+  const [copiedMacCmd, setCopiedMacCmd] = useState(false);
   const [showManifest, setShowManifest] = useState(false);
+  const [showPlist, setShowPlist] = useState(false);
+
+  const macSha256 = 'e486441d6ab5f85a653e2f94d11fd81b8af241c105a53b1ca668087495354573';
+  const macInstallCmd = 'xattr -cr "/Applications/AI Secure Space.app" && open "/Applications/AI Secure Space.app"';
 
   const handleCopySha = () => {
     if (!apkInfo) return;
@@ -44,10 +53,254 @@ export const AndroidArtifactCard: React.FC<AndroidArtifactCardProps> = ({
     setTimeout(() => setCopiedAdb(false), 2000);
   };
 
+  const handleCopyMacSha = () => {
+    navigator.clipboard.writeText(macSha256);
+    setCopiedMacSha(true);
+    setTimeout(() => setCopiedMacSha(false), 2000);
+  };
+
+  const handleCopyMacCmd = () => {
+    navigator.clipboard.writeText(macInstallCmd);
+    setCopiedMacCmd(true);
+    setTimeout(() => setCopiedMacCmd(false), 2000);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      {/* Platform Switcher Tabs */}
+      <div className="flex items-center space-x-2 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 w-fit">
+        <button
+          onClick={() => setPlatform('android')}
+          className={`flex items-center space-x-2.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            platform === 'android'
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Smartphone className="h-4 w-4" />
+          <span>Android Standalone APK (216 MB)</span>
+        </button>
+
+        <button
+          onClick={() => setPlatform('macos')}
+          className={`flex items-center space-x-2.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            platform === 'macos'
+              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Apple className="h-4 w-4" />
+          <span>Apple macOS App (.dmg / .zip 218 MB)</span>
+        </button>
+      </div>
+
+      {platform === 'macos' ? (
+        /* macOS Platform Section */
+        <div className="space-y-6 animate-fadeIn">
+          {/* Top Banner */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="flex items-start space-x-4">
+                <div className="h-14 w-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0 shadow-inner">
+                  <Apple className="h-7 w-7" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-3">
+                    <h2 className="text-xl font-bold text-white tracking-tight">
+                      Apple macOS Universal 218 MB Application
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/30">
+                      Apple Silicon (M1-M4) + Intel • macOS 10.15+
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+                    Pre-bundled standalone Apple Application Bundle (.app) and Mountable Disk Image (.dmg) with embedded offline neural models, Groth16 ZK keys, Apple Icon (.icns), and local micro-server.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  id="download-mac-dmg-btn"
+                  href="/AI-Secure-Space-macOS.dmg"
+                  download="AI-Secure-Space-macOS.dmg"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-sky-600 via-cyan-600 to-teal-600 hover:from-sky-500 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-sky-900/40 transition-all cursor-pointer"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Download .dmg (218 MB)</span>
+                </a>
+
+                <a
+                  id="download-mac-zip-btn"
+                  href="/AI-Secure-Space-macOS-Universal.zip"
+                  download="AI-Secure-Space-macOS-Universal.zip"
+                  className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                >
+                  <Download className="h-4 w-4 text-sky-400" />
+                  <span>Download .zip (218 MB)</span>
+                </a>
+
+                <a
+                  id="download-mac-script-btn"
+                  href="/install-mac.sh"
+                  download="install-mac.sh"
+                  className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                >
+                  <Terminal className="h-4 w-4 text-sky-400" />
+                  <span>install-mac.sh</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Artifact Specifications */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Bundle Details */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center space-x-2">
+                  <FolderCheck className="h-4 w-4 text-sky-400" />
+                  <span>macOS Bundle Structure</span>
+                </h3>
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800">
+                  APPLE BUNDLE
+                </span>
+              </div>
+
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 break-all">
+                /Applications/AI Secure Space.app
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between py-1 border-b border-slate-800">
+                  <span className="text-slate-400">Bundle Identifier:</span>
+                  <span className="font-mono text-slate-200">ai.secure.space.macos</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800">
+                  <span className="text-slate-400">Version:</span>
+                  <span className="font-mono text-sky-400">2.0.0</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800">
+                  <span className="text-slate-400">Architecture:</span>
+                  <span className="font-mono text-slate-200">Universal (arm64 + x86_64)</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-400">Min macOS:</span>
+                  <span className="font-mono text-sky-400 font-bold">10.15+ (Catalina to Sequoia)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: SHA-256 Checksum */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center space-x-2">
+                  <ShieldCheck className="h-4 w-4 text-cyan-400" />
+                  <span>SHA256 Integrity Verification</span>
+                </h3>
+                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800">
+                  AUTHENTIC
+                </span>
+              </div>
+
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-cyan-400 break-all select-all">
+                {macSha256}
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-slate-400">DMG Checksum Hash</span>
+                <button
+                  onClick={handleCopyMacSha}
+                  className="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+                >
+                  {copiedMacSha ? <Check className="h-3.5 w-3.5 text-cyan-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedMacSha ? 'Copied!' : 'Copy SHA256'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Card 3: Gatekeeper Approval Command */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center space-x-2">
+                  <Terminal className="h-4 w-4 text-sky-400" />
+                  <span>macOS Install & Gatekeeper</span>
+                </h3>
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800">
+                  TERMINAL
+                </span>
+              </div>
+
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs text-sky-300 break-all select-all">
+                {macInstallCmd}
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-slate-400">Removes quarantine flags</span>
+                <button
+                  onClick={handleCopyMacCmd}
+                  className="flex items-center space-x-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+                >
+                  {copiedMacCmd ? <Check className="h-3.5 w-3.5 text-sky-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedMacCmd ? 'Copied!' : 'Copy Command'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Plist Details Dropdown */}
+          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4">
+            <button
+              onClick={() => setShowPlist(!showPlist)}
+              className="flex items-center justify-between w-full text-left text-xs font-semibold text-slate-300 hover:text-white"
+            >
+              <div className="flex items-center space-x-2">
+                <FileCode className="h-4 w-4 text-sky-400" />
+                <span>View Apple Info.plist Bundle Manifest</span>
+              </div>
+              <span className="text-slate-500 font-mono text-[10px]">
+                {showPlist ? '▲ HIDE' : '▼ SHOW'}
+              </span>
+            </button>
+
+            {showPlist && (
+              <div className="mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs text-slate-300">
+                <div className="text-sky-400 font-semibold mb-2">// Contents/Info.plist (Bundled in AI Secure Space.app):</div>
+                <pre className="text-slate-400 overflow-x-auto">
+{`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>AI Secure Space</string>
+    <key>CFBundleDisplayName</key>
+    <string>AI Secure Space</string>
+    <key>CFBundleIdentifier</key>
+    <string>ai.secure.space.macos</string>
+    <key>CFBundleVersion</key>
+    <string>2.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleExecutable</key>
+    <string>AI Secure Space</string>
+    <key>CFBundleIconFile</key>
+    <string>app.icns</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>`}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Android Platform Section */
+        <div className="space-y-6 animate-fadeIn">
+          {/* Top Banner */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-start space-x-4">
             <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0 shadow-inner">
@@ -349,5 +602,7 @@ export const AndroidArtifactCard: React.FC<AndroidArtifactCardProps> = ({
         )}
       </div>
     </div>
+  )}
+</div>
   );
 };

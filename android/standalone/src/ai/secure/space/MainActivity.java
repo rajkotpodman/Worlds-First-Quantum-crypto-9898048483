@@ -51,11 +51,14 @@ public class MainActivity extends Activity {
             window.setNavigationBarColor(Color.parseColor("#020617"));
         }
 
-        // Initialize WebView and render instantly so UI is active on screen without waiting
+        // 1. Start local micro-server first so it's ready for any loopback requests
+        startLocalServer();
+
+        // 2. Initialize hardware-accelerated WebView & load application
         initWebView();
 
+        // 3. Start background security daemon & async model extraction
         startAutoStartService();
-        startLocalServer();
         extractOfflineBundleFilesAsync();
 
         // Prompt permissions smoothly after UI is rendered so dialogs do not block initial paint
@@ -65,7 +68,7 @@ public class MainActivity extends Activity {
                 public void run() {
                     autoRequestPermissions();
                 }
-            }, 1200);
+            }, 1500);
         }
     }
 
@@ -190,9 +193,11 @@ public class MainActivity extends Activity {
         mWebView = new WebView(this);
         mWebView.setBackgroundColor(Color.parseColor("#020617"));
 
-        // CRITICAL FIX FOR EMULATORS: Force software rendering layer to avoid virtual GPU/DirectX/ANGLE texture compositing black screen
+        // Enable hardware acceleration explicitly for smooth GPU compositing and animations
         try {
-            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
         } catch (Exception ignored) {}
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -233,7 +238,7 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith("https://localhost") || url.startsWith("http://127.0.0.1") || url.startsWith("http://localhost")) {
+                if (url != null && (url.startsWith("https://localhost") || url.startsWith("http://127.0.0.1") || url.startsWith("http://localhost"))) {
                     return false;
                 }
                 view.loadUrl(url);
@@ -272,12 +277,18 @@ public class MainActivity extends Activity {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 if (request != null && request.getUrl() != null) {
                     Log.e("AISecureSpace_Web", "WebView Error on " + request.getUrl() + ": " + (error != null ? error.getDescription() : "unknown"));
+                    if (request.isForMainFrame()) {
+                        fallbackToLocalServer(view);
+                    }
                 }
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Log.e("AISecureSpace_Web", "WebView Error [" + errorCode + "] " + description + " on " + failingUrl);
+                if (failingUrl != null && failingUrl.startsWith("https://localhost")) {
+                    fallbackToLocalServer(view);
+                }
             }
         });
 
@@ -313,29 +324,22 @@ public class MainActivity extends Activity {
 
         setContentView(mWebView);
 
-        // Read dist/index.html directly from APK assets to inject into memory with zero network delay
-        String htmlContent = null;
-        try {
-            InputStream is = getAssets().open("dist/index.html");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buf = new byte[8192];
-            int len;
-            while ((len = is.read(buf)) != -1) {
-                baos.write(buf, 0, len);
-            }
-            is.close();
-            htmlContent = baos.toString("UTF-8");
-        } catch (Exception e) {
-            Log.e("AISecureSpace", "Failed to read dist/index.html from assets: " + e.getMessage());
-        }
+        Log.i("AISecureSpace", "Loading application via https://localhost/index.html");
+        mWebView.loadUrl("https://localhost/index.html");
+    }
 
-        if (htmlContent != null && !htmlContent.isEmpty()) {
-            Log.i("AISecureSpace", "Rendering index.html via loadDataWithBaseURL (" + htmlContent.length() + " bytes)");
-            mWebView.loadDataWithBaseURL("https://localhost/", htmlContent, "text/html", "UTF-8", "https://localhost/index.html");
-        } else {
-            Log.i("AISecureSpace", "Falling back to loadUrl");
-            mWebView.loadUrl("https://localhost/index.html");
-        }
+    private volatile boolean mFallbackLoaded = false;
+    private void fallbackToLocalServer(final WebView view) {
+        if (mFallbackLoaded) return;
+        mFallbackLoaded = true;
+        final String fallbackUrl = "http://127.0.0.1:" + mServerPort + "/index.html";
+        Log.w("AISecureSpace_Web", "Origin https://localhost/ failed on main frame; switching to local micro-server: " + fallbackUrl);
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.loadUrl(fallbackUrl);
+            }
+        });
     }
 
     private WebResourceResponse handleAssetOrApiResponse(Uri uri) {
@@ -384,23 +388,33 @@ public class MainActivity extends Activity {
                 if (!cleanPath.contains(".")) {
                     try {
                         is = getAssets().open("dist/index.html");
-                        finalMimeType = "text/html; charset=utf-8";
+                        finalMimeType = "text/html";
                     } catch (Exception ignored) {}
                 }
             }
         }
 
         if (is != null) {
-            WebResourceResponse resp = new WebResourceResponse(finalMimeType, "UTF-8", is);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Map<String, String> headers = new HashMap<String, String>();
-                headers.put("Access-Control-Allow-Origin", "*");
-                headers.put("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-                headers.put("Access-Control-Allow-Headers", "*");
-                headers.put("Cache-Control", "no-cache");
-                resp.setResponseHeaders(headers);
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Access-Control-Allow-Origin", "*");
+            headers.put("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+            headers.put("Access-Control-Allow-Headers", "*");
+            headers.put("Cache-Control", "no-cache");
+            if (finalMimeType.equals("application/javascript")) {
+                headers.put("Content-Type", "application/javascript; charset=utf-8");
+            } else if (finalMimeType.equals("text/html")) {
+                headers.put("Content-Type", "text/html; charset=utf-8");
+            } else if (finalMimeType.equals("text/css")) {
+                headers.put("Content-Type", "text/css; charset=utf-8");
+            } else if (finalMimeType.equals("application/json")) {
+                headers.put("Content-Type", "application/json; charset=utf-8");
             }
-            return resp;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return new WebResourceResponse(finalMimeType, "UTF-8", 200, "OK", headers, is);
+            } else {
+                return new WebResourceResponse(finalMimeType, "UTF-8", is);
+            }
         }
 
         return null;
@@ -410,25 +424,31 @@ public class MainActivity extends Activity {
         try {
             byte[] bytes = json.getBytes("UTF-8");
             ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-            WebResourceResponse resp = new WebResourceResponse("application/json; charset=utf-8", "UTF-8", stream);
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Access-Control-Allow-Origin", "*");
+            headers.put("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+            headers.put("Access-Control-Allow-Headers", "*");
+            headers.put("Content-Type", "application/json; charset=utf-8");
+            headers.put("Content-Length", String.valueOf(bytes.length));
+            headers.put("Cache-Control", "no-cache");
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Map<String, String> headers = new HashMap<String, String>();
-                headers.put("Access-Control-Allow-Origin", "*");
-                headers.put("Content-Length", String.valueOf(bytes.length));
-                resp.setResponseHeaders(headers);
+                return new WebResourceResponse("application/json", "UTF-8", 200, "OK", headers, stream);
+            } else {
+                return new WebResourceResponse("application/json", "UTF-8", stream);
             }
-            return resp;
         } catch (Exception e) {
             return null;
         }
     }
 
     public static String getMimeType(String path) {
+        if (path == null) return "application/octet-stream";
         String lower = path.toLowerCase();
-        if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html; charset=utf-8";
-        if (lower.endsWith(".js") || lower.endsWith(".mjs")) return "application/javascript; charset=utf-8";
-        if (lower.endsWith(".css")) return "text/css; charset=utf-8";
-        if (lower.endsWith(".json")) return "application/json; charset=utf-8";
+        if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html";
+        if (lower.endsWith(".js") || lower.endsWith(".mjs")) return "application/javascript";
+        if (lower.endsWith(".css")) return "text/css";
+        if (lower.endsWith(".json")) return "application/json";
         if (lower.endsWith(".wasm")) return "application/wasm";
         if (lower.endsWith(".png")) return "image/png";
         if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
@@ -437,6 +457,7 @@ public class MainActivity extends Activity {
         if (lower.endsWith(".woff2")) return "font/woff2";
         if (lower.endsWith(".woff")) return "font/woff";
         if (lower.endsWith(".ttf")) return "font/ttf";
+        if (lower.endsWith(".bin") || lower.endsWith(".ptau") || lower.endsWith(".zkey") || lower.endsWith(".dat")) return "application/octet-stream";
         return "application/octet-stream";
     }
 
@@ -595,9 +616,13 @@ public class MainActivity extends Activity {
         }
 
         private void sendStreamResponse(OutputStream out, int statusCode, String statusText, String contentType, InputStream stream) throws IOException {
+            String headerContentType = contentType;
+            if (contentType.equals("text/html") || contentType.equals("text/css") || contentType.equals("application/javascript") || contentType.equals("application/json")) {
+                headerContentType = contentType + "; charset=utf-8";
+            }
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
             pw.print("HTTP/1.1 " + statusCode + " " + statusText + "\r\n");
-            pw.print("Content-Type: " + contentType + "\r\n");
+            pw.print("Content-Type: " + headerContentType + "\r\n");
             pw.print("Access-Control-Allow-Origin: *\r\n");
             pw.print("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE\r\n");
             pw.print("Access-Control-Allow-Headers: *\r\n");
@@ -614,17 +639,7 @@ public class MainActivity extends Activity {
         }
 
         private String getMimeType(String path) {
-            String lower = path.toLowerCase();
-            if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html; charset=utf-8";
-            if (lower.endsWith(".js") || lower.endsWith(".mjs")) return "application/javascript; charset=utf-8";
-            if (lower.endsWith(".css")) return "text/css; charset=utf-8";
-            if (lower.endsWith(".json")) return "application/json; charset=utf-8";
-            if (lower.endsWith(".wasm")) return "application/wasm";
-            if (lower.endsWith(".png")) return "image/png";
-            if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
-            if (lower.endsWith(".svg")) return "image/svg+xml";
-            if (lower.endsWith(".ico")) return "image/x-icon";
-            return "application/octet-stream";
+            return MainActivity.getMimeType(path);
         }
     }
 

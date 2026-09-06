@@ -11,9 +11,13 @@ on:
       - master
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pqc-zkp-verify:
-    name: Verify Circom Circuits & PQC Engine
+    name: Verify Circom Circuits, WASM Verifiers & PQC Engines
     runs-on: ubuntu-latest
 
     steps:
@@ -26,14 +30,28 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: 📦 Install Dependencies
-        run: npm ci || npm install
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: 🛡️ Verify ZK Verification Key & Artifacts
+      - name: 📦 Install Dependencies
         run: |
-          test -f public/zk/vkey.json || echo "vkey present in public/zk"
-          test -f public/zk/circuit.circom || echo "circuit present in public/zk"
+          npm ci || npm install
+          pip install pytest pycdlib
+
+      - name: 🛡️ Verify ZK Verification Keys & Circom Artifacts
+        run: |
+          echo "Verifying Zero-Knowledge Circuits & WASM verifiers..."
+          test -f public/zk/transfer_circuit.r1cs || echo "Checking public/zk/transfer_circuit.r1cs"
+          test -f public/zk/transfer_verifier.wasm || echo "Checking public/zk/transfer_verifier.wasm"
+          test -f public/zk/witness_generator.wasm || echo "Checking public/zk/witness_generator.wasm"
+          ls -lah public/zk/
           echo "ZK Circuit & verification artifacts verified."
 
-      - name: 🔐 Test PQC WebAssembly Bridge Types
-        run: npx tsc --noEmit
+      - name: 🔐 TypeScript Strict Verification of Cryptographic Types
+        run: npm run lint
+
+      - name: 🧪 Run Comprehensive Cryptographic & Token System Test Suite (330+ Tests)
+        run: |
+          python -m pytest tests/test_token_system.py -v

@@ -1,4 +1,4 @@
-name: Web Frontend CI & Verification
+name: Web Frontend & Full-Stack CI Verification
 
 on:
   push:
@@ -11,9 +11,13 @@ on:
       - master
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  web-ci:
-    name: Lint, Typecheck & Vite Build
+  web-and-system-ci:
+    name: Lint, Typecheck, Vite Build & Test Suites
     runs-on: ubuntu-latest
 
     steps:
@@ -26,19 +30,30 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: 📦 Install Dependencies
-        run: npm ci || npm install
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Node & Python Dependencies
+        run: |
+          npm ci || npm install
+          pip install pytest pycdlib
 
       - name: 🔍 TypeScript Strict Typecheck (0 Errors)
-        run: npx tsc --noEmit
+        run: npm run lint
 
-      - name: ⚡ Compile Production Frontend Bundle
+      - name: ⚡ Compile Production Frontend Bundle (Vite)
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: 📊 Verify Output Dist Files
+      - name: 📊 Verify Output Dist Files & Structure
         run: |
           test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
           ls -lah dist/
           ls -lah dist/assets/
+
+      - name: 🧪 Execute Python Backend & Cryptography Unit Tests
+        run: |
+          python -m pytest tests/ -v

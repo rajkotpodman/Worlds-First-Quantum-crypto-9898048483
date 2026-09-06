@@ -1,0 +1,100 @@
+name: macOS CI/CD Pipeline & Apple Bundle Builder
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-macos:
+    name: Build macOS Apple Application Bundle & DMG Installer (200+ MB)
+    runs-on: macos-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Node & Python Dependencies
+        run: |
+          npm ci || npm install
+          pip install pycdlib pillow pytest
+
+      - name: 🔍 TypeScript Strict Typecheck (0 Errors)
+        run: npm run lint
+
+      - name: ⚡ Build Vite Web Application Bundle
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🍎 Build macOS App, DMG, Universal ZIP & Installer
+        run: |
+          npm run build:mac
+          test -d "dist/AI Secure Space.app" || { echo "AI Secure Space.app missing"; exit 1; }
+          test -f "dist/AI-Secure-Space-macOS.dmg" || { echo "AI-Secure-Space-macOS.dmg missing"; exit 1; }
+          test -f "dist/AI-Secure-Space-macOS-Universal.zip" || { echo "Universal zip missing"; exit 1; }
+          test -f "dist/install-mac.sh" || { echo "install-mac.sh missing"; exit 1; }
+
+      - name: 🛡️ Verify macOS Bundle Structure & Executable Permissions
+        run: |
+          echo "Verifying Info.plist..."
+          test -f "dist/AI Secure Space.app/Contents/Info.plist"
+          echo "Verifying App Launcher..."
+          test -x "dist/AI Secure Space.app/Contents/MacOS/AI Secure Space"
+          echo "Verifying App Icon..."
+          test -f "dist/AI Secure Space.app/Contents/Resources/AppIcon.icns"
+          echo "Testing DMG mountability on macOS kernel..."
+          hdiutil attach -nobrowse "dist/AI-Secure-Space-macOS.dmg" -mountpoint /tmp/aisecurespace_mount
+          ls -la /tmp/aisecurespace_mount
+          test -d "/tmp/aisecurespace_mount/AI Secure Space.app"
+          hdiutil detach /tmp/aisecurespace_mount
+
+      - name: 🔑 Compute Cryptographic SHA-256 & SHA-512 Checksums
+        run: |
+          mkdir -p build_artifacts/macos
+          cp -f dist/AI-Secure-Space-macOS.dmg build_artifacts/macos/
+          cp -f dist/AI-Secure-Space-macOS-Universal.zip build_artifacts/macos/
+          cp -f dist/install-mac.sh build_artifacts/macos/
+          cp -f dist/*.sha256 build_artifacts/macos/ 2>/dev/null || true
+          cp -f dist/*.sha512 build_artifacts/macos/ 2>/dev/null || true
+          cd build_artifacts/macos
+          shasum -a 256 AI-Secure-Space-macOS.dmg > AI-Secure-Space-macOS.dmg.sha256
+          shasum -a 256 AI-Secure-Space-macOS-Universal.zip > AI-Secure-Space-macOS-Universal.zip.sha256
+          shasum -a 256 * > SHA256SUMS.txt
+          shasum -a 512 * > SHA512SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: 📤 Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-secure-space-macos-release
+          path: |
+            build_artifacts/macos/AI-Secure-Space-macOS.dmg
+            build_artifacts/macos/AI-Secure-Space-macOS-Universal.zip
+            build_artifacts/macos/install-mac.sh
+            build_artifacts/macos/*.sha256
+            build_artifacts/macos/*.sha512
+            build_artifacts/macos/*.txt
+          retention-days: 30
+          if-no-files-found: error

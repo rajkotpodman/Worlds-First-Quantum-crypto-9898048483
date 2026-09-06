@@ -177,7 +177,7 @@ function findAndroidSdk() {
   };
 }
 
-function tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode) {
+function tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode, options = {}) {
   const sdk = findAndroidSdk();
   if (!sdk) {
     return null;
@@ -356,9 +356,14 @@ function tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode) {
   }
 
   // 3. Generate 200+ MB Offline AI Models, ZK Tau Parameters & PQC Tables
-  console.log('[2/6] Generating and verifying 200+ MB offline bundle assets...');
-  const genScript = path.join(rootDir, 'scripts/generate_offline_bundle_assets.py');
-  child_process.execFileSync('python', [genScript, path.join(buildDir, 'assets')], { stdio: 'inherit' });
+  const includeOfflineModels = options.includeOfflineModels ?? (mode !== 'fast' && mode !== 'minimal' && process.env.APK_MINIMAL !== 'true');
+  if (includeOfflineModels) {
+    console.log('[2/6] Generating and verifying 200+ MB offline bundle assets...');
+    const genScript = path.join(rootDir, 'scripts/generate_offline_bundle_assets.py');
+    child_process.execFileSync('python', [genScript, path.join(buildDir, 'assets')], { stdio: 'inherit' });
+  } else {
+    console.log('[2/6] Fast/minimal build: keeping APK lightweight without synthetic offline models.');
+  }
 
   // 4. Compile Java Source to Dalvik Bytecode (.class -> classes.dex)
   console.log('[3/6] Compiling Java Activity and generating Dalvik Bytecode (classes.dex)...');
@@ -418,6 +423,20 @@ function tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode) {
   copyRec(distDir, path.join(buildDir, 'assets/dist'));
   copyRec(path.join(rootDir, 'assets/zk'), path.join(buildDir, 'assets/zk'));
   copyRec(path.join(rootDir, 'public/zk'), path.join(buildDir, 'assets/zk'));
+
+  // Strictly remove any recursive APKs, hashes, or nested builds from assets
+  function cleanApksRec(dir) {
+    if (!fs.existsSync(dir)) return;
+    for (const f of fs.readdirSync(dir)) {
+      const p = path.join(dir, f);
+      if (fs.statSync(p).isDirectory()) {
+        cleanApksRec(p);
+      } else if (f.endsWith('.apk') || f.endsWith('.sha256') || f.endsWith('.sha512')) {
+        fs.unlinkSync(p);
+      }
+    }
+  }
+  cleanApksRec(path.join(buildDir, 'assets'));
 
   // 6. Compile Resources and Manifest with AAPT
   console.log('[5/6] Packaging APK archive with AAPT (preserving uncompressed offline models)...');
@@ -496,8 +515,11 @@ function tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode) {
     'app-hybrid-release.apk',
     'app-release.apk',
     'debug.apk',
+    'release.apk',
     'signed-release.apk',
-    'ai-secure-space.apk'
+    'ai-secure-space.apk',
+    'ai-secure-space-debug.apk',
+    'ai-secure-space-release.apk'
   ];
 
   for (const name of outputNames) {
@@ -592,7 +614,7 @@ export function buildHybridApk(options = {}) {
 
   // 1. Try Native Android SDK packaging engine (AAPT + D8 + javac + ZipAlign + Apksigner)
   try {
-    const nativeResult = tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode);
+    const nativeResult = tryBuildNativeAndroidApk(rootDir, distDir, publicDir, mode, config);
     if (nativeResult) {
       return nativeResult;
     }

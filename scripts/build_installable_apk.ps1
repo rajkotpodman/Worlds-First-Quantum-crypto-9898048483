@@ -286,6 +286,9 @@ if (Test-Path $publicZkDir) {
     Copy-Item (Join-Path $publicZkDir "*") (Join-Path $BUILD_DIR "assets\zk") -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+# Remove any nested APKs or hashes from all embedded assets recursively to avoid recursive bloat
+Get-ChildItem -Recurse (Join-Path $BUILD_DIR "assets") -File | Where-Object { $_.Name -match '\.(apk|sha256|sha512)$' } | Remove-Item -Force -ErrorAction SilentlyContinue
+
 # 6. Compile Resources and Manifest with AAPT
 Write-Host '-------------------------------------------------------------------' -ForegroundColor Gray
 Write-Host '[6/7] Packaging APK archive with AAPT (preserving uncompressed offline models)...' -ForegroundColor Yellow
@@ -367,22 +370,29 @@ $apkNames = @(
     "app-hybrid-release.apk",
     "app-release.apk",
     "debug.apk",
+    "release.apk",
     "signed-release.apk",
-    "ai-secure-space.apk"
+    "ai-secure-space.apk",
+    "ai-secure-space-release.apk",
+    "ai-secure-space-debug.apk"
 )
 
 foreach ($name in $apkNames) {
     $destDist = Join-Path $DIST_DIR $name
     $destPublic = Join-Path $PUBLIC_DIR $name
+    $destRoot = Join-Path $ROOT_DIR $name
 
     Copy-Item $FINAL_APK $destDist -Force
     Copy-Item $FINAL_APK $destPublic -Force
+    Copy-Item $FINAL_APK $destRoot -Force
 
     Set-Content -Path "$destDist.sha256" -Value "$sha256  $name" -Encoding ASCII
     Set-Content -Path "$destPublic.sha256" -Value "$sha256  $name" -Encoding ASCII
+    Set-Content -Path "$destRoot.sha256" -Value "$sha256  $name" -Encoding ASCII
 
     Set-Content -Path "$destDist.sha512" -Value "$sha512  $name" -Encoding ASCII
     Set-Content -Path "$destPublic.sha512" -Value "$sha512  $name" -Encoding ASCII
+    Set-Content -Path "$destRoot.sha512" -Value "$sha512  $name" -Encoding ASCII
 }
 
 Write-Host '===================================================================' -ForegroundColor Green

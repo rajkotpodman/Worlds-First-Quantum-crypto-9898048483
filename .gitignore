@@ -11,9 +11,20 @@ coverage/
 *.ptau
 *.db
 *.dex
+*.dmg
+*.iso
+*.app/
+*.zip
+*.tar.gz
 assets/models/
 assets/data/
 assets/zk/*.ptau
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
 
 # Android Build & SDK Ignores
 .gradle/
@@ -29,4 +40,5 @@ android_sdk/
 jdk-*/
 *.keystore
 *.jks
+
 

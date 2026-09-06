@@ -305,6 +305,20 @@ export function buildNativeInstallableApk() {
   copyRec(path.join(rootDir, 'assets/zk'), path.join(buildDir, 'assets/zk'));
   copyRec(path.join(rootDir, 'public/zk'), path.join(buildDir, 'assets/zk'));
 
+  // Strictly remove any recursive APKs, hashes, or nested builds from assets
+  function cleanApksRec(dir) {
+    if (!fs.existsSync(dir)) return;
+    for (const f of fs.readdirSync(dir)) {
+      const p = path.join(dir, f);
+      if (fs.statSync(p).isDirectory()) {
+        cleanApksRec(p);
+      } else if (f.endsWith('.apk') || f.endsWith('.sha256') || f.endsWith('.sha512')) {
+        fs.unlinkSync(p);
+      }
+    }
+  }
+  cleanApksRec(path.join(buildDir, 'assets'));
+
   // 6. Compile Resources and Manifest with AAPT
   console.log('[5/6] Packaging APK archive with AAPT (preserving uncompressed offline models)...');
   const unalignedApk = path.join(buildDir, 'unaligned.apk');
