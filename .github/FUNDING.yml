@@ -1,0 +1,39 @@
+# ==============================================================================
+# GitHub Sponsors & Community Funding Configuration
+# Project: Worlds-First-Quantum-crypto-9898048483
+# Repository: rajkotpodman/Worlds-First-Quantum-crypto-9898048483
+# Description: Advanced Post-Quantum Cryptographic Security Framework
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Primary GitHub Platform Sponsorship (Up to 4 usernames)
+# ------------------------------------------------------------------------------
+github: [rajkotpodman]
+
+# ------------------------------------------------------------------------------
+# 2. Individual & Creator Micro-Funding Platforms
+# ------------------------------------------------------------------------------
+patreon: rajkotpodman
+ko_fi: rajkotpodman
+buy_me_a_coffee: rajkotpodman
+liberapay: rajkotpodman
+
+# ------------------------------------------------------------------------------
+# 3. Enterprise & Open Source Ecosystem Funding
+# ------------------------------------------------------------------------------
+open_collective: rajkotpodman
+tidelift: npm/quantum-crypto-9898048483
+community_bridge: quantum-crypto-security
+lfx_crowdfunding: quantum-crypto-security
+issuehunt: rajkotpodman
+polar: rajkotpodman
+thanks_dev: rajkotpodman
+
+# ------------------------------------------------------------------------------
+# 4. Custom & Decentralized / Web3 Sponsorship Gateways (Up to 4 URLs)
+# ------------------------------------------------------------------------------
+custom:
+  - 'https://github.com/sponsors/rajkotpodman'
+  - 'https://quantum-crypto-security.org/donate'
+  - 'https://patreon.com/rajkotpodman'
+  - 'https://ko-fi.com/rajkotpodman'
