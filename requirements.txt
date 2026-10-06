@@ -10,7 +10,7 @@ stem==1.8.2
 pysocks==1.7.1
 pytest==8.0.0
 requests==2.31.0
-httpx==0.26.0
+httpx==0.28.1
 ecdsa==0.18.0
 web3==6.15.1
 cffi==1.16.0
