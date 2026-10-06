@@ -58,10 +58,10 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 
     constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22") {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.4.20") {
             because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
         }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22") {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.20") {
             because("kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
         }
     }
