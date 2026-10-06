@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": "tx_1791177990551_mbs8t3",
+    "senderId": "operator_alpha",
+    "receiverId": "test_user",
+    "amount": 50,
+    "type": "shielded",
+    "timestamp": "2026-10-05T05:26:30.551Z",
+    "txHash": "0x7513c6fdf172e81a10a872197",
+    "status": "confirmed"
+  },
+  {
+    "id": "tx_genesis_y7mu0gqd",
+    "senderId": "SYSTEM_FAUCET_GENESIS",
+    "receiverId": "test_user",
+    "amount": 1000,
+    "type": "genesis",
+    "timestamp": "2026-10-05T05:02:01.464Z",
+    "txHash": "0x5c6ef5f399fbf1a10a70b6f8",
+    "status": "confirmed"
+  }
+]

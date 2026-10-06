@@ -16,6 +16,13 @@ import tokenRouter from './server/routers/token_router.js';
 import webAuthnRouter from './server/routers/webAuthnRouter.js';
 import { tokenLedger } from './server/services/tokenLedger.js';
 
+process.on('unhandledRejection', (reason) => {
+  console.warn('[Background Unhandled Rejection]:', (reason as any)?.message || reason);
+});
+process.on('uncaughtException', (err) => {
+  console.warn('[Background Uncaught Exception]:', (err as any)?.message || err);
+});
+
 const app = express();
 const PORT = 3000;
 
@@ -291,11 +298,13 @@ app.post('/api/tokens/balance', async (req, res) => {
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
   try {
     const balance = tokenLedger.getBalance(userId, email);
-    // Background async sync attempt if adminDb is available
-    try {
-      const docRef = adminDb.collection('user_ledgers').doc(userId);
-      docRef.set({ balance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
-    } catch (_) {}
+    // Background async sync attempt if adminDb is available with valid credentials
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      try {
+        const docRef = adminDb.collection('user_ledgers').doc(userId);
+        docRef.set({ balance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
+      } catch (_) {}
+    }
     res.json({ balance: balance.toFixed(4) });
   } catch (err: any) {
     const fallbackBal = tokenLedger.getBalance(userId, email);
@@ -318,11 +327,13 @@ app.post('/api/tokens/transfer', async (req, res) => {
   
   try {
     const result = tokenLedger.transfer(senderId, receiverId, numericAmount, senderEmail);
-    // Background async sync attempt with Firestore
-    try {
-      adminDb.collection('user_ledgers').doc(senderId).set({ balance: result.senderBalance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
-      adminDb.collection('user_ledgers').doc(receiverId).set({ balance: result.receiverBalance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
-    } catch (_) {}
+    // Background async sync attempt with Firestore if credentials configured
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      try {
+        adminDb.collection('user_ledgers').doc(senderId).set({ balance: result.senderBalance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
+        adminDb.collection('user_ledgers').doc(receiverId).set({ balance: result.receiverBalance, updatedAt: Date.now() }, { merge: true }).catch(() => {});
+      } catch (_) {}
+    }
     res.json({ success: true, ...result });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Transfer failed' });
@@ -4604,7 +4615,9 @@ async function startServer() {
     if (!fs.existsSync(distPath)) {
       fs.mkdirSync(distPath, { recursive: true });
     }
-    buildDebugApk(distPath);
+    if (!fs.existsSync(path.join(distPath, 'debug.apk')) && !fs.existsSync(path.join(distPath, 'app-release.apk'))) {
+      buildDebugApk(distPath);
+    }
   } catch (e) {
     console.warn('[Startup] Initial APK generation note:', e);
   }
@@ -4646,6 +4659,66 @@ async function startServer() {
       res.status(500).json({ error: error.message });
     }
   });
+
+  app.get('/api/v1/hardware-token/list', async (req, res) => {
+    try {
+      const { execSync } = await import('child_process');
+      const pyOutput = execSync('python scripts/etoken_manager.py --list', { encoding: 'utf-8', timeout: 8000 });
+      res.json(JSON.parse(pyOutput));
+    } catch (e: any) {
+      res.status(500).json({ error: e.message, stderr: e.stderr?.toString() });
+    }
+  });
+
+  app.post('/api/v1/hardware-token/sign', async (req, res) => {
+    try {
+      const { payload, pin = '12345678', mode = 'hybrid' } = req.body;
+      const txData = payload || 'TX:DEFAULT_QUANTUM_PAYLOAD';
+      const flag = mode === 'hybrid' ? '--hybrid' : '--sign';
+      const { execSync } = await import('child_process');
+      const escapedPayload = JSON.stringify(txData);
+      const pyOutput = execSync(`python scripts/etoken_manager.py ${flag} ${escapedPayload} --pin ${pin}`, { encoding: 'utf-8', timeout: 12000 });
+      res.json(JSON.parse(pyOutput));
+    } catch (e: any) {
+      res.status(500).json({ error: e.message, stderr: e.stderr?.toString() });
+    }
+  });
+
+  // 51% Sovereign Stake Hardware Vault Endpoints
+  app.get('/api/v1/vault/hardware-status', (req, res) => {
+    try {
+      const status = tokenLedger.getHardwareVaultStatus();
+      res.json({ success: true, vault: status });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post('/api/v1/vault/hardware-lock', async (req, res) => {
+    try {
+      const { pin = '9898048483' } = req.body;
+      const { execSync } = await import('child_process');
+      const pyOutput = execSync(`python scripts/secure_51_percent_vault.py ${pin}`, { encoding: 'utf-8', timeout: 15000 });
+      const status = tokenLedger.getHardwareVaultStatus();
+      res.json({ success: true, vault: status, log: pyOutput });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message, stderr: e.stderr?.toString() });
+    }
+  });
+
+  app.post('/api/v1/vault/hardware-transfer', async (req, res) => {
+    try {
+      const { senderId, receiverId, amount, pin = '9898048483', senderEmail } = req.body;
+      if (!senderId || !receiverId || !amount) {
+        return res.status(400).json({ error: 'Missing required parameters: senderId, receiverId, amount' });
+      }
+      const result = tokenLedger.transferWithHardwareAuth(senderId, receiverId, Number(amount), pin, senderEmail);
+      res.json({ success: true, ...result });
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  });
+
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {

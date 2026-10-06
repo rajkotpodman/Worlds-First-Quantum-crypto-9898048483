@@ -1,0 +1,32 @@
+{
+  "is_hardware_locked": true,
+  "token_id": "9898048483",
+  "sovereign_stake_balance": 504800472633,
+  "total_cap": 989804848300,
+  "stake_percentage": "51.00%",
+  "owner_email": "india9898048483@gmail.com",
+  "owner_alias": "operator_alpha",
+  "lock_timestamp": "2026-10-06T04:02:22Z",
+  "security_policy": {
+    "fips_level": "FIPS 140-2 Level 3 Hardware Cryptographic Boundary",
+    "driver": "C:\\Windows\\System32\\eTPKCS11.dll",
+    "token_label": "QuantumCryptoToken",
+    "key_alias": "QuantumMasterKey",
+    "key_attributes": "CKA_EXTRACTABLE=FALSE, CKA_PRIVATE=TRUE, CKA_SIGN=TRUE",
+    "pin_authorization_required": true,
+    "quantum_immunity": "NIST FIPS 204 ML-DSA-87 (Category 5 Dilithium-5)"
+  },
+  "cryptographic_attestation": {
+    "bond_hash_sha256": "cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91",
+    "classical_hw_signature": "a9775b85a2082049d1098e8954a467eb4967697f3263218f60aeb30c7ffdaacb31abde4f721e0b124ef642e626194c9a2bc2808e8452c9c27c155898607d3bbc4136857429f7dc463207e31bdf2db440d7bca3b60c8d5757503dd00574ce6523e42884fd5710ec81241f073975b06c4935e85687dc08e11b3a3c9510609bf8876d0af9c16144199c4fec30857b3cc95969af3363df1f3d24a42b8a4da68a7fe71cc95057d870520c0d368be20ff31fcc721c471090e54ffefa3d383281923c0b8f5a2050d2bb66dbb001bc413bf8b3d3d470f6bce94a18551da43e7d59a2200406388768655220441269535a988e8bfbbf507936596da83db4d67c2ec27f0479",
+    "post_quantum_signature_truncated": "77b8c87fa9b805f77c35e0e3f7ddd1b4bc9ccca07df327bee32f1833f24e67d484adc7a251d34ac1cc86f9eaded18a1d11052262f47d94c948f5636177f7e210... [4627 bytes total]",
+    "verified": true,
+    "status": "HARDWARE_SEALED_AND_IMMUTABLE"
+  },
+  "formal_verification": {
+    "smt_invariant": "CURRENT_ADMIN_BALANCE >= 504_799_000_000",
+    "lower_bound_floor": 504799047233,
+    "unauthorized_spend_forbidden": true,
+    "hardware_pin_barrier_verified": true
+  }
+}

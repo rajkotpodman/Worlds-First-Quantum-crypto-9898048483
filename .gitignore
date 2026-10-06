@@ -41,4 +41,10 @@ jdk-*/
 *.keystore
 *.jks
 
+# Nested sub-repos and installers
+loc/
+*.msi
+tools/
+
+
 

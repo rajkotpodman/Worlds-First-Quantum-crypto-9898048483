@@ -2,13 +2,34 @@
   "india9898048483@gmail.com": {
     "balance": 504799047233,
     "email": "india9898048483@gmail.com",
-    "role": "Master Admin / Sovereign Stakeholder (51%)",
-    "updatedAt": 1788351774547
+    "role": "Master Admin / Sovereign Stakeholder (51% eToken Pro Hardware Locked)",
+    "updatedAt": 1791259342637,
+    "isHardwareSecured": true,
+    "hardwareKeyId": "QuantumMasterKey",
+    "hardwareVaultBond": "cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91"
   },
   "operator_alpha": {
+    "balance": 504799047183,
+    "email": "india9898048483@gmail.com",
+    "role": "Master Admin / Sovereign Stakeholder (51% eToken Pro Hardware Locked)",
+    "updatedAt": 1791259342637,
+    "isHardwareSecured": true,
+    "hardwareKeyId": "QuantumMasterKey",
+    "hardwareVaultBond": "cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91"
+  },
+  "mock_uid_8hz8s30abu9": {
     "balance": 504799047233,
     "email": "india9898048483@gmail.com",
-    "role": "Master Admin / Sovereign Stakeholder (51%)",
-    "updatedAt": 1788351774547
+    "role": "Master Admin / Sovereign Stakeholder (51% eToken Pro Hardware Locked)",
+    "updatedAt": 1791259342637,
+    "isHardwareSecured": true,
+    "hardwareKeyId": "QuantumMasterKey",
+    "hardwareVaultBond": "cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91"
+  },
+  "test_user": {
+    "balance": 1050,
+    "email": "test@example.com",
+    "role": "Verified Google Account / Android Node",
+    "updatedAt": 1791177990551
   }
 }
