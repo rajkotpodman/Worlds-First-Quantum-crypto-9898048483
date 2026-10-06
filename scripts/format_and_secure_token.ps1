@@ -13,11 +13,18 @@ Write-Host " [eToken Pro 4254 - Hardware Format & 51% Token Sovereign Lock]" -Fo
 Write-Host "======================================================================" -ForegroundColor Cyan
 
 # 1. Install Driver if INF is available
-$driverDir = "C:\Users\DELL\Downloads\pki_rte_files\Windows\System32\Setup\Aladdin\eToken"
-if (Test-Path "$driverDir\aksup.inf") {
-    Write-Host "[*] Registering Aladdin eToken 4254 Kernel Drivers (aksup.inf, aksifdh.inf)..." -ForegroundColor White
-    pnputil.exe /add-driver "$driverDir\*.inf" /install | Out-Null
+$driverDirs = @(
+    "E:\eToken_Driver",
+    "C:\Users\DELL\OneDrive\Desktop\eToken_Driver",
+    "C:\Users\DELL\Downloads\pki_rte_files\Windows\System32\Setup\Aladdin\eToken"
+)
+foreach ($dir in $driverDirs) {
+    if (Test-Path "$dir\aksup.inf") {
+        Write-Host "[*] Registering Aladdin eToken 4254 Drivers from $dir..." -ForegroundColor White
+        pnputil.exe /add-driver "$dir\*.inf" /install | Out-Null
+    }
 }
+
 
 # 2. Check and Start Smart Card Service
 Write-Host "[*] Checking Windows Smart Card Service (SCardSvr)..." -ForegroundColor White

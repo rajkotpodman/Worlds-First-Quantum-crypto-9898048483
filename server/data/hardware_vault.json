@@ -6,7 +6,7 @@
   "stake_percentage": "51.00%",
   "owner_email": "india9898048483@gmail.com",
   "owner_alias": "operator_alpha",
-  "lock_timestamp": "2026-10-06T04:02:22Z",
+  "lock_timestamp": "2026-10-06T14:18:00Z",
   "security_policy": {
     "fips_level": "FIPS 140-2 Level 3 Hardware Cryptographic Boundary",
     "driver": "C:\\Windows\\System32\\eTPKCS11.dll",
@@ -17,9 +17,9 @@
     "quantum_immunity": "NIST FIPS 204 ML-DSA-87 (Category 5 Dilithium-5)"
   },
   "cryptographic_attestation": {
-    "bond_hash_sha256": "cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91",
-    "classical_hw_signature": "a9775b85a2082049d1098e8954a467eb4967697f3263218f60aeb30c7ffdaacb31abde4f721e0b124ef642e626194c9a2bc2808e8452c9c27c155898607d3bbc4136857429f7dc463207e31bdf2db440d7bca3b60c8d5757503dd00574ce6523e42884fd5710ec81241f073975b06c4935e85687dc08e11b3a3c9510609bf8876d0af9c16144199c4fec30857b3cc95969af3363df1f3d24a42b8a4da68a7fe71cc95057d870520c0d368be20ff31fcc721c471090e54ffefa3d383281923c0b8f5a2050d2bb66dbb001bc413bf8b3d3d470f6bce94a18551da43e7d59a2200406388768655220441269535a988e8bfbbf507936596da83db4d67c2ec27f0479",
-    "post_quantum_signature_truncated": "77b8c87fa9b805f77c35e0e3f7ddd1b4bc9ccca07df327bee32f1833f24e67d484adc7a251d34ac1cc86f9eaded18a1d11052262f47d94c948f5636177f7e210... [4627 bytes total]",
+    "bond_hash_sha256": "c57cf38337dc1bdf3ef5a2362526804ad1cf687d516c48fafe22ce0faefa19af",
+    "classical_hw_signature": "aff025044f294af4f618b2e5e161e71227093b64408af835641af82ce57e6c720f5736110c38e222970ea8c506d0afec6c3a784817267f31c4aca6aba08e1f7b031b01cc44621c1133d855ae5b19e854ecca5d156351b3bcc670f7b5783ae2ba5977f5b08142cb65f5975ec2e8bda57c169731c479796ee45ef4a9031f2ebaad79385fc90712c5829d47d631638681f3b5cddd39a8d1de741dd1491062886e8600f695381954a0fd4f1d2e5f9f705e161016e881edfef5574eb2ea8e90a0644db02e8159f68edbff8ec6b7241be3c8494975325972e6baa225681b1840582fd8f131f4ad44f9729602fd455b50ca0d9a39352c88f79325072d179d5d4dd7056b",
+    "post_quantum_signature_truncated": "83dabb513807ccf7bde51b8f50b299bc51ca2681e7066984a4dad834659ac10dbb0f90a50a8198272d42ad70aa7e8dbaff9c006e959ff68f8e935b57a948c393... [4627 bytes total]",
     "verified": true,
     "status": "HARDWARE_SEALED_AND_IMMUTABLE"
   },
