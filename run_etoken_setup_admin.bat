@@ -16,7 +16,14 @@ echo  [Aladdin eToken Pro 4254 - Automated Driver & 51%% Hardware Setup]
 echo ==============================================================================
 
 echo [*] Installing Aladdin eToken USB Drivers into Windows Driver Store...
+pnputil.exe /add-driver "E:\eToken_Driver\aksup.inf" /install
+pnputil.exe /add-driver "E:\eToken_Driver\aksifdh.inf" /install
+pnputil.exe /add-driver "C:\Users\DELL\OneDrive\Desktop\eToken_Driver\aksup.inf" /install
+pnputil.exe /add-driver "C:\Users\DELL\OneDrive\Desktop\eToken_Driver\aksifdh.inf" /install
 pnputil.exe /add-driver "C:\Users\DELL\Downloads\pki_rte_files\Windows\System32\Setup\Aladdin\eToken\*.inf" /install
+
+echo [*] Scanning for hardware device updates...
+pnputil.exe /scan-devices
 
 echo [*] Starting Smart Card Service (SCardSvr)...
 sc config SCardSvr start= auto
