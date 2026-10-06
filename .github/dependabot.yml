@@ -1,0 +1,109 @@
+# ==============================================================================
+# Dependabot Automated Dependency Security & Version Updates
+# Project: Worlds-First-Quantum-crypto-9898048483
+# Repository: https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483
+# Reference: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# ==============================================================================
+
+version: 2
+updates:
+  # ----------------------------------------------------------------------------
+  # 1. NPM Dependencies (Web Dashboard, TypeScript, Vite, React & Crypto APIs)
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "typescript"
+          - "vite"
+
+  # ----------------------------------------------------------------------------
+  # 2. Python Dependencies (Post-Quantum NIST ML-DSA/KEM, PKCS#11, ZKP Scripts)
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "python"
+      - "post-quantum"
+    commit-message:
+      prefix: "chore(deps-python)"
+      include: "scope"
+
+  # ----------------------------------------------------------------------------
+  # 3. Android Gradle Dependencies (Android Client, StrongBox & Native Bridges)
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "android"
+      - "gradle"
+    commit-message:
+      prefix: "chore(deps-android)"
+      include: "scope"
+
+  # ----------------------------------------------------------------------------
+  # 4. GitHub Actions CI/CD Workflows (.github/workflows)
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "ci/cd"
+      - "github-actions"
+    commit-message:
+      prefix: "ci(actions)"
+      include: "scope"
+
+  # ----------------------------------------------------------------------------
+  # 5. Docker Containers (Android CI Builder & Toolchains)
+  # ----------------------------------------------------------------------------
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(docker)"
+      include: "scope"
