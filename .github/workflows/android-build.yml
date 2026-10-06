@@ -75,7 +75,7 @@ jobs:
           cat SHA256SUMS.txt
 
       - name: 📤 Upload Android APK Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ai-secure-space-android-apks
           path: |

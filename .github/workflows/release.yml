@@ -65,7 +65,7 @@ jobs:
           sha512sum * > SHA512SUMS.txt
 
       - name: 📤 Upload Android Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-android-binaries
           path: release_android/
@@ -119,7 +119,7 @@ jobs:
           shasum -a 512 * > SHA512SUMS.txt
 
       - name: 📤 Upload macOS Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-macos-binaries
           path: release_macos/
