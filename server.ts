@@ -14,6 +14,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import tokenRouter from './server/routers/token_router.js';
 import webAuthnRouter from './server/routers/webAuthnRouter.js';
+import mirofishRouter from './server/routers/mirofish_router.js';
 import { tokenLedger } from './server/services/tokenLedger.js';
 
 process.on('unhandledRejection', (reason) => {
@@ -35,6 +36,7 @@ app.get('/health', (req, res) => {
 });
 app.use('/api/v1/token', tokenRouter);
 app.use('/api/v1/webauthn', webAuthnRouter);
+app.use('/api/v1/mirofish', mirofishRouter);
 
 // In-memory state for DevSecOps & AI Secure Space telemetry
 let latestPipelineRun = {

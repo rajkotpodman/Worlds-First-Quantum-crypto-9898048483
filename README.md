@@ -9,6 +9,7 @@
 [![Hardware HSM](https://img.shields.io/badge/eToken_Pro-51%25_Stake_Locked-gold.svg?style=for-the-badge)](server/data/hardware_vault.json)
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-pink.svg?style=for-the-badge)](https://github.com/sponsors/rajkotpodman)
 [![Discussions](https://img.shields.io/badge/Discussions-Community%20Chat-informational.svg?style=for-the-badge)](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions)
+[![MiroFish: Swarm Prediction](https://img.shields.io/badge/MiroFish-Swarm_AI_Prediction-cyan.svg?style=for-the-badge)](docs/MIROFISH_INTEGRATION.md)
 [![Platform: Android & Web](https://img.shields.io/badge/Platform-WebAuthn%20%7C%20Android%20TEE%20StrongBox-orange.svg?style=for-the-badge)](#)
 [![APK Signing: v1 + v2 + v3](https://img.shields.io/badge/APK_Signature-Scheme_v1+v2+v3-success.svg?style=for-the-badge)](#)
 
@@ -56,6 +57,12 @@ Welcome to the **9898048483 Quantum Crypto Ecosystem & AI Secure Space**—an en
 - **Post-Quantum Envelope:** NIST FIPS 204 ML-DSA-87 (Category 5 Dilithium-5)
 - **Attestation Bond Seal:** `cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91`
 - **Formal Verification:** Invariant `CURRENT_ADMIN_BALANCE >= 504_799_000_000` cryptographically sealed in [`server/data/hardware_vault.json`](server/data/hardware_vault.json).
+
+### 🐟 MiroFish Swarm Intelligence & Multi-Agent Sandbox
+- **Swarm Prediction Engine:** Deep integration with [666ghj/MiroFish](https://github.com/666ghj/MiroFish) for simulating 1,000+ synthetic agents (Validators, Traders, Quantum Adversaries, and Arbitrageurs).
+- **Stress-Testing Scenarios:** Validates 51% invariant inviolability, Shor quantum factorizations against NIST ML-DSA-87 lattice shields, and deflationary burn curves.
+- **Interactive Web Sandbox:** Live 2D HTML5 canvas visualizer, real-time agent event stream, and AI predictive synthesis reports directly in the dashboard (`#dock-btn-mirofish`).
+- **Technical Specification:** Documented in [`docs/MIROFISH_INTEGRATION.md`](docs/MIROFISH_INTEGRATION.md).
 
 ### 💬 Community, Discussions & Sponsorship
 - **GitHub Discussions:** Join public conversations and roadmap proposals at [GitHub Discussions](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions).

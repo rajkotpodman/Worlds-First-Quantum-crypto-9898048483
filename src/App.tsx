@@ -32,8 +32,9 @@ import { TokenFaucetPanel } from './components/TokenFaucetPanel';
 import { ZkpProofGeneratorPanel } from './components/ZkpProofGeneratorPanel';
 import { QkdEntanglementNetworkPanel } from './components/QkdEntanglementNetworkPanel';
 import { PythonRuntimeConsole } from './components/PythonRuntimeConsole';
+import { MiroFishSwarmSimulator } from './components/MiroFishSwarmSimulator';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
-import { Globe, Terminal, Smartphone, Wallet, ArrowDownUp, EyeOff } from 'lucide-react';
+import { Globe, Terminal, Smartphone, Wallet, ArrowDownUp, EyeOff, Cpu } from 'lucide-react';
 
 
 export default function App() {
@@ -619,7 +620,32 @@ export default function App() {
               <div className="text-[10px] text-emerald-400/80 font-mono">Signed Binary</div>
             </div>
           </button>
+
+          <button
+            id="dock-btn-mirofish"
+            onClick={() => setActiveTab('mirofish')}
+            className={`p-3 rounded-xl border text-left transition-all group flex flex-col justify-between cursor-pointer ${
+              activeTab === 'mirofish'
+                ? 'bg-cyan-950/50 border-cyan-500/70 shadow-lg shadow-cyan-950/60 ring-1 ring-cyan-500/40'
+                : 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Cpu className="w-5 h-5 text-cyan-400 group-hover:animate-pulse" />
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">
+                SWARM
+              </span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-bold text-slate-100">MiroFish Swarm</div>
+              <div className="text-[10px] text-cyan-400/80 font-mono">Multi-Agent AI</div>
+            </div>
+          </button>
         </div>
+
+        {activeTab === 'mirofish' && (
+          <MiroFishSwarmSimulator />
+        )}
 
         {activeTab === 'wallet' && (
           <div className="space-y-6">
