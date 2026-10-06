@@ -1,7 +1,7 @@
 # ==============================================================================
 # Dockerfile for Building Android APK with Embedded React/Vite Web Assets
 # ==============================================================================
-FROM ubuntu:22.04
+FROM ubuntu:25.10
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
