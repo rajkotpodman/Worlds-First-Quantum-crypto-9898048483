@@ -1,7 +1,6 @@
 name: "OpenSSF Supply Chain Security Scorecard"
 
 on:
-  branch_protection_rule:
   schedule:
     - cron: '20 7 * * 2' # Weekly Tuesdays at 07:20 UTC
   push:
@@ -31,7 +30,7 @@ jobs:
         with:
           results_file: results.sarif
           results_format: sarif
-          publish_results: true
+          publish_results: false
 
       - name: 📤 Upload SARIF Results to GitHub Security Tab
         uses: github/codeql-action/upload-sarif@v3

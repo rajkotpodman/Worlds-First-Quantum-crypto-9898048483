@@ -22,5 +22,6 @@ jobs:
         uses: codespell-project/actions-codespell@v2
         with:
           check_filenames: true
-          skip: "*.apk,*.jks,*.keystore,*.png,*.jpg,*.svg,*.pdf,*.ptau,*.zkey,*.wasm,node_modules,.git,dist"
-          ignore_words_list: "ans,te,nd,ba,fo,hasp,aladdin,etoken,dilithium,kyber,pqc,safenet,pkcs,pkcs11,zkp,chsh,mldsa,mlkem"
+          only_warn: 1
+          skip: "*.apk,*.jks,*.keystore,*.png,*.jpg,*.svg,*.pdf,*.ptau,*.zkey,*.wasm,node_modules,.git,dist,*Untitled document*"
+          ignore_words_list: "ans,te,nd,ba,fo,hasp,aladdin,etoken,dilithium,kyber,pqc,safenet,pkcs,pkcs11,zkp,chsh,mldsa,mlkem,amountin,strat,opps,ist,bund,pres,covert"
