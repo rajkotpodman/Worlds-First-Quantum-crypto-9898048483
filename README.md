@@ -3,16 +3,24 @@
 # 🌌 World's First 9898048483 Quantum Crypto Currency & AI Secure Space Sovereign Node
 **Securing Sovereign Financial Freedom, Hardware TEE Enclaves, and Autonomous Intelligence in the Post-Quantum Era**
 
-[![Version](https://img.shields.io/badge/version-2.5.0--signed--production-emerald.svg?style=for-the-badge)](https://github.com/9898048483)
+[![Version](https://img.shields.io/badge/version-2.5.0--signed--production-emerald.svg?style=for-the-badge)](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Security: Post-Quantum](https://img.shields.io/badge/Security-ML--DSA--87%20%7C%20Falcon--1024-purple.svg?style=for-the-badge)](https://csrc.nist.gov/projects/post-quantum-cryptography)
+[![Hardware HSM](https://img.shields.io/badge/eToken_Pro-51%25_Stake_Locked-gold.svg?style=for-the-badge)](server/data/hardware_vault.json)
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-pink.svg?style=for-the-badge)](https://github.com/sponsors/rajkotpodman)
+[![Discussions](https://img.shields.io/badge/Discussions-Community%20Chat-informational.svg?style=for-the-badge)](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions)
 [![Platform: Android & Web](https://img.shields.io/badge/Platform-WebAuthn%20%7C%20Android%20TEE%20StrongBox-orange.svg?style=for-the-badge)](#)
 [![APK Signing: v1 + v2 + v3](https://img.shields.io/badge/APK_Signature-Scheme_v1+v2+v3-success.svg?style=for-the-badge)](#)
-[![Database: Firestore Encrypted](https://img.shields.io/badge/Database-Firestore_Encrypted_Hybrid-yellow.svg?style=for-the-badge)](#)
 
 <br/>
 
 <div class="pro-action-hub">
+  <a href="https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions" target="_blank">
+    <button class="pro-btn btn-discuss" style="background:#8b5cf6;color:#fff;border:1px solid #a78bfa;padding:12px 20px;font-weight:bold;border-radius:10px;cursor:pointer;font-size:14px;margin:4px;">💬 GITHUB DISCUSSIONS</button>
+  </a>
+  <a href="https://github.com/sponsors/rajkotpodman" target="_blank">
+    <button class="pro-btn btn-sponsor" style="background:#ec4899;color:#fff;border:1px solid #f472b6;padding:12px 20px;font-weight:bold;border-radius:10px;cursor:pointer;font-size:14px;margin:4px;">💖 SPONSOR & DONATE</button>
+  </a>
   <a href="https://wa.me/919898048483" target="_blank">
     <button class="pro-btn btn-buy-pro" style="background:#10b981;color:#fff;border:1px solid #34d399;padding:12px 20px;font-weight:bold;border-radius:10px;cursor:pointer;font-size:14px;margin:4px;">⚡ BUY NOW PRO (APPOINTMENT)</button>
   </a>
@@ -40,6 +48,19 @@ Welcome to the **9898048483 Quantum Crypto Ecosystem & AI Secure Space**—an en
 - **Dual-Layer Hybrid Ledger:** Real-time state persistence with Firebase Firestore combined with a **Deterministic Offline Fallback Engine**. In air-gapped or network-partitioned environments, transactions execute locally with cryptographic signatures and reconcile asynchronously upon network restoration.
 - **Deflationary Burn Mechanics:** Dynamic transaction fee burn rate (0.1%–0.5% per on-chain transfer) with automated liquidity replenishment pools.
 - **Staking & Proof-of-Entanglement Rewards:** Node operators and validator enclaves earn dynamic staking yields (4.8%–12.4% APY) rewarded via autonomous liquid staking derivatives (`stToken9898`).
+
+### 🛡️ Sovereign 51% Stake Hardware Enclave Lockdown
+- **Locked Stake:** `504,800,472,633` TOK (Strict 51.00% floor)
+- **Hardware Security Device:** Aladdin / SafeNet eToken Pro 4254 PKCS#11 HSM
+- **Key Alias:** `QuantumMasterKey` (Non-Exportable On-Chip RSA-2048)
+- **Post-Quantum Envelope:** NIST FIPS 204 ML-DSA-87 (Category 5 Dilithium-5)
+- **Attestation Bond Seal:** `cb31171f6c40dc2691e15cf8305b04b34754dcd38816bbd494e2ca4ba9b0ed91`
+- **Formal Verification:** Invariant `CURRENT_ADMIN_BALANCE >= 504_799_000_000` cryptographically sealed in [`server/data/hardware_vault.json`](server/data/hardware_vault.json).
+
+### 💬 Community, Discussions & Sponsorship
+- **GitHub Discussions:** Join public conversations and roadmap proposals at [GitHub Discussions](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions).
+- **Issue Tracker:** Report bugs, request features, or submit validator inquiries via [GitHub Issues](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/issues).
+- **Sponsorship & Donations:** Support research, hardware enclaves, and public node infrastructure at [DONATE.md](DONATE.md) and [GitHub Sponsors](https://github.com/sponsors/rajkotpodman).
 
 ---
 

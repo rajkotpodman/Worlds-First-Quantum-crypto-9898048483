@@ -1,0 +1,38 @@
+name: "🔒 Security Vulnerability Report"
+description: "Submit a responsible disclosure regarding Post-Quantum cryptography or Hardware HSM isolation"
+title: "[SECURITY]: "
+labels: ["security", "critical"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **CRITICAL**: If this vulnerability poses an immediate exploit risk to live nodes or keys, please also email our security team directly at `india9898048483@gmail.com` or create a [Private Vulnerability Report](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/security/advisories/new).
+  - type: input
+    id: severity
+    attributes:
+      label: Severity Assessment
+      description: CVSS or impact level (Critical, High, Medium, Low)
+      placeholder: "e.g. High"
+    validations:
+      required: true
+  - type: textarea
+    id: vulnerability
+    attributes:
+      label: Vulnerability Details
+      description: Describe the potential cryptographic or implementation vulnerability.
+    validations:
+      required: true
+  - type: textarea
+    id: proof_of_concept
+    attributes:
+      label: Proof of Concept
+      description: Steps or script to reproduce the behavior safely.
+    validations:
+      required: true
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Remediation
+      description: Proposed patch or hardening rule.
+    validations:
+      required: false

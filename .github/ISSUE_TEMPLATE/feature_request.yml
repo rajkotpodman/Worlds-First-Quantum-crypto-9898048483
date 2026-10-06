@@ -1,0 +1,35 @@
+name: "🚀 Feature Request & Cryptographic Proposal"
+description: "Suggest an enhancement or new capability for Token 9898048483"
+title: "[PROPOSAL]: "
+labels: ["enhancement", "proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Suggest enhancements for Post-Quantum algorithms, Hardware HSM integration, Android mobile security, or token economic mechanics.
+  - type: input
+    id: title_summary
+    attributes:
+      label: Summary
+      placeholder: "e.g. Add support for Falcon-1024 alongside ML-DSA-87"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Motivation
+      description: Is your feature request related to a specific limitation or quantum threat vector?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Implementation / Architecture
+      description: Describe the solution you would like to see implemented.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Approaches Considered
+      description: Any alternative cryptographic algorithms or architectural patterns considered?

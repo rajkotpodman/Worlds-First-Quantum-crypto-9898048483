@@ -1,0 +1,39 @@
+name: "🪙 Token 9898048483 & Validator Inquiry"
+description: "Inquire about public token distribution, testnet faucet, validator node setup, or sovereign stake"
+title: "[TOKEN]: "
+labels: ["token-9898048483", "community"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Official inquiry portal for Sovereign Post-Quantum Token 9898048483.
+        - **Total Supply Cap**: 989,804,848,300 TOK
+        - **51% Master Sovereign Stake**: 504,800,472,633 TOK (Hardware Locked via eToken Pro PKCS#11 HSM)
+        - **Community / Node Reserve**: 484,995,375,667 TOK
+  - type: dropdown
+    id: category
+    attributes:
+      label: Inquiry Category
+      options:
+        - "Testnet Faucet / Token Claim"
+        - "Validator Node Registration"
+        - "Hardware Key / PKCS#11 Integration Support"
+        - "Exchange / Public Listing Inquiry"
+        - "Ecosystem Partnership & Grant"
+    validations:
+      required: true
+  - type: input
+    id: wallet_address
+    attributes:
+      label: Beneficiary / Sovereign Public Key
+      description: Your public cryptographic address or PQC public key hash (DO NOT share private keys or PINs!)
+      placeholder: "e.g. 0x9898... or ML-DSA public key hex"
+    validations:
+      required: false
+  - type: textarea
+    id: details
+    attributes:
+      label: Inquiry Details
+      description: Provide details about your node hardware, distribution request, or validation deployment.
+    validations:
+      required: true
