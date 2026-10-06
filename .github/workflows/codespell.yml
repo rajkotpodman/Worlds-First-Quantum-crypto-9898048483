@@ -1,0 +1,26 @@
+name: "Codespell Typo & Grammar Linter"
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  codespell:
+    name: Spell Check Repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔤 Run Codespell
+        uses: codespell-project/actions-codespell@v2
+        with:
+          check_filenames: true
+          skip: "*.apk,*.jks,*.keystore,*.png,*.jpg,*.svg,*.pdf,*.ptau,*.zkey,*.wasm,node_modules,.git,dist"
+          ignore_words_list: "ans,te,nd,ba,fo,hasp,aladdin,etoken,dilithium,kyber,pqc,safenet,pkcs,pkcs11,zkp,chsh,mldsa,mlkem"

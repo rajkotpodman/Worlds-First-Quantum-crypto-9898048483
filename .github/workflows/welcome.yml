@@ -1,0 +1,32 @@
+name: "Welcome First-Time Contributors"
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    name: Welcome Contributor
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🌟 Greet New Contributor
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 Welcome to **Worlds-First-Quantum-crypto-9898048483**!
+            Thank you for opening your first issue in our Post-Quantum Cryptography & Hardware Security Enclave project.
+            
+            - Review our [README.md](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483#readme) for architecture overview.
+            - Join our [GitHub Discussions](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/discussions) to engage with our sovereign node community.
+            - Check our [DONATE.md](https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/blob/main/DONATE.md) for supporting hardware research.
+          pr-message: |
+            🎉 Thank you for submitting your first pull request to **Worlds-First-Quantum-crypto-9898048483**!
+            Our automated CI/CD pipeline (Android build, macOS bundle, PQC verification & CodeQL) will automatically test your changes.
+            Maintainers will review your contribution shortly.

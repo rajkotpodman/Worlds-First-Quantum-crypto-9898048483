@@ -1,0 +1,48 @@
+# ==============================================================================
+# Release Drafter Configuration
+# Reference: https://github.com/release-drafter/release-drafter
+# ==============================================================================
+
+name-template: 'v$NEXT_PATCH_VERSION - Post-Quantum Sovereign Release'
+tag-template: 'v$NEXT_PATCH_VERSION'
+
+categories:
+  - title: '🚀 Post-Quantum Features & Architectural Enhancements'
+    labels:
+      - 'feature'
+      - 'enhancement'
+      - 'area:post-quantum'
+
+  - title: '🛡️ Hardware Security Enclave & PKCS#11 Updates'
+    labels:
+      - 'area:hardware-hsm'
+      - 'security'
+
+  - title: '📱 Android Native Client & Secure Space APK'
+    labels:
+      - 'area:android'
+
+  - title: '🐞 Bug Fixes & Cryptographic Stability'
+    labels:
+      - 'bug'
+      - 'fix'
+
+  - title: '📚 Documentation & Whitepaper'
+    labels:
+      - 'documentation'
+      - 'area:documentation'
+
+  - title: '⚙️ CI/CD, Build Systems & Dependencies'
+    labels:
+      - 'dependencies'
+      - 'ci/cd'
+      - 'area:ci-cd'
+
+change-template: '- $TITLE by @$AUTHOR in #$NUMBER'
+
+template: |
+  ## What's Changed in this Sovereign Release
+
+  $CHANGES
+
+  **Full Commit Diff**: https://github.com/rajkotpodman/Worlds-First-Quantum-crypto-9898048483/compare/$RESOLVED_VERSION...v$NEXT_PATCH_VERSION

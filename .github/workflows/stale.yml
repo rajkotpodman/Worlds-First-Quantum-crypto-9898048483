@@ -1,0 +1,28 @@
+name: "Manage Stale Issues & PRs"
+
+on:
+  schedule:
+    - cron: '0 1 * * *' # Every day at 01:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Stale Issue & PR Monitor
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⏳ Check and Mark Stale Items
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 60
+          days-before-close: 14
+          stale-issue-message: "This issue has been automatically marked as stale because it has not had recent activity. It will be closed in 14 days if no further activity occurs. Thank you for your contributions to Token 9898048483!"
+          stale-pr-message: "This pull request has been automatically marked as stale due to inactivity. It will be closed in 14 days if no updates are made."
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          exempt-issue-labels: "pinned,security,critical,token-9898048483"
+          exempt-pr-labels: "pinned,security,work-in-progress"

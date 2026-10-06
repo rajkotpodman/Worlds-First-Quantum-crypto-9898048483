@@ -1,0 +1,15 @@
+# ==============================================================================
+# Auto Assign Configuration for Pull Requests & Issues
+# ==============================================================================
+
+addReviewers: true
+addAssignees: true
+
+reviewers:
+  - rajkotpodman
+
+assignees:
+  - rajkotpodman
+
+numberOfReviewers: 1
+numberOfAssignees: 1

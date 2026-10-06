@@ -1,0 +1,59 @@
+# ==============================================================================
+# GitHub Labeler Path Match Rules
+# Reference: https://github.com/actions/labeler
+# ==============================================================================
+
+area:post-quantum:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'circuits/**'
+          - 'scripts/etoken_manager.py'
+          - 'scripts/secure_51_percent_vault.py'
+          - 'src/services/quantum**'
+          - 'src/services/pqc**'
+
+area:android:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'android/**'
+          - 'android-client/**'
+          - 'scripts/*apk*'
+          - '*.apk*'
+          - 'Dockerfile.android'
+
+area:hardware-hsm:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'scripts/*etoken*'
+          - 'scripts/*vault*'
+          - 'server/data/hardware_vault.json'
+          - 'run_etoken_setup_admin.bat'
+
+area:frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/**'
+          - 'public/**'
+          - 'index.html'
+          - 'vite.config.ts'
+
+area:backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/**'
+          - 'server.ts'
+
+area:documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.md'
+          - 'docs/**'
+          - 'DONATE.md'
+          - 'WHITEPAPER.md'
+
+area:ci-cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - 'scripts/build*.sh'
+          - 'scripts/bundle*.js'

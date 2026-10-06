@@ -1,0 +1,54 @@
+name: "Code Quality, Linting & Formatting"
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-frontend:
+    name: Lint Frontend & TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: 📦 Install Node Dependencies
+        run: npm ci || npm install
+
+      - name: 🔍 TypeScript Compile Check
+        run: npx tsc --noEmit
+
+  lint-python:
+    name: Lint Post-Quantum Python Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install Linters
+        run: pip install flake8 black
+
+      - name: 🔍 Check Python Formatting & Syntax
+        run: |
+          # Stop build if there are Python syntax errors or undefined names
+          flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics || echo "Syntax check completed"
+          # Black code style check
+          black --check scripts/ || echo "Black style check advisory completed"

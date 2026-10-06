@@ -1,0 +1,24 @@
+name: "Lock Inactive Closed Discussions & Issues"
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # Every Sunday at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  lock:
+    name: Lock Inactive Threads
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔒 Lock Closed Threads
+        uses: dessant/lock-threads@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-inactive-days: 90
+          pr-inactive-days: 90
+          issue-comment: "This issue has been automatically locked due to inactivity after closure. Please open a new issue or discussion for related discussions."
+          pr-comment: "This pull request has been automatically locked due to inactivity after closure."

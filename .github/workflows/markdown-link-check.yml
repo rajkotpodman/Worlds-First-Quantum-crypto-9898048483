@@ -1,0 +1,30 @@
+name: "Markdown Links Verification"
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+    branches: [main, master]
+  pull_request:
+    paths:
+      - '**/*.md'
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-link-check:
+    name: Check Markdown Documentation Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔗 Verify Markdown URLs
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          check-modified-files-only: 'yes'
+          base-branch: 'main'

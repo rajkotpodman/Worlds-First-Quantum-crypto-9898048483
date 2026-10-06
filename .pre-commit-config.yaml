@@ -1,0 +1,29 @@
+# ==============================================================================
+# Pre-Commit Git Hooks Configuration
+# Reference: https://pre-commit.com/
+# ==============================================================================
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=25000']
+      - id: check-merge-conflict
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        files: ^scripts/
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        exclude: ^(\.git|node_modules|dist|.*\.apk|.*\.jks|.*\.keystore)
+        args: ['-L', 'ans,te,nd,ba,fo,hasp,aladdin,etoken,dilithium,kyber,pqc,safenet,pkcs,pkcs11,zkp,chsh,mldsa,mlkem']
