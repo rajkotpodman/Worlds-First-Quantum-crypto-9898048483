@@ -33,6 +33,7 @@ import { ZkpProofGeneratorPanel } from './components/ZkpProofGeneratorPanel';
 import { QkdEntanglementNetworkPanel } from './components/QkdEntanglementNetworkPanel';
 import { PythonRuntimeConsole } from './components/PythonRuntimeConsole';
 import { MiroFishSwarmSimulator } from './components/MiroFishSwarmSimulator';
+import { OpenSCHardwarePanel } from './components/OpenSCHardwarePanel';
 import { PipelineRun, ApkInfo, DevOpsAlert, AuditEvent, RepoSecret, UserSpaceRecord } from './types';
 import { Globe, Terminal, Smartphone, Wallet, ArrowDownUp, EyeOff, Cpu } from 'lucide-react';
 
@@ -769,6 +770,10 @@ export default function App() {
 
         {activeTab === 'zerotouch' && (
           <ZeroTouchConsole onWipeSpace={handleWipeSpace} />
+        )}
+
+        {activeTab === 'opensc_suite' && (
+          <OpenSCHardwarePanel />
         )}
 
         {activeTab === 'tor' && (

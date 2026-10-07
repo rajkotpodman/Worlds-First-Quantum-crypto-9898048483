@@ -17,9 +17,13 @@ import hashlib
 import traceback
 from typing import Optional, Dict, Any
 
+REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOCAL_OPENSC_DLL = os.path.join(REPO_DIR, "opensc", "bin", "pkcs11", "opensc-pkcs11.dll")
+
 # Potential PKCS#11 Library paths on Windows
 DEFAULT_PKCS11_PATHS = [
     r"C:\Windows\System32\eTPKCS11.dll",
+    LOCAL_OPENSC_DLL,
     r"C:\Program Files\SafeNet\Authentication\SAC\x64\eTPKCS11.dll",
     r"C:\Program Files (x86)\SafeNet\Authentication\SAC\eTPKCS11.dll",
     r"C:\Program Files\OpenSC Project\OpenSC\pkcs11\opensc-pkcs11.dll",

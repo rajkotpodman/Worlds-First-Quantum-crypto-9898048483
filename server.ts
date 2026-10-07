@@ -17,6 +17,7 @@ import webAuthnRouter from './server/routers/webAuthnRouter.js';
 import mirofishRouter from './server/routers/mirofish_router.js';
 import { tokenLedger } from './server/services/tokenLedger.js';
 import { hardwareTokenDetector } from './server/crypto/hardwareTokenDetector.js';
+import { openscBridge } from './server/crypto/openscBridge.js';
 
 process.on('unhandledRejection', (reason) => {
   console.warn('[Background Unhandled Rejection]:', (reason as any)?.message || reason);
@@ -4825,6 +4826,84 @@ async function startServer() {
       res.json({ success: true, ...result });
     } catch (e: any) {
       res.status(400).json({ error: e.message });
+    }
+  });
+
+  // ==============================================================================
+  // Integrated OpenSC Project Engine API
+  // ==============================================================================
+  app.get('/api/v1/opensc/status', (req, res) => {
+    try {
+      const paths = openscBridge.getPaths();
+      const readersRes = openscBridge.listReaders();
+      const slotsRes = openscBridge.listSlots();
+      res.json({
+        success: true,
+        integrated: true,
+        paths,
+        readers: readersRes.readers,
+        slotsRaw: slotsRes.slots,
+        hasConnectedReaders: readersRes.readers.length > 0
+      });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.get('/api/v1/opensc/readers', (req, res) => {
+    try {
+      const result = openscBridge.listReaders();
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.get('/api/v1/opensc/cardos-info', (req, res) => {
+    try {
+      const result = openscBridge.getCardOSInfo();
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post('/api/v1/opensc/change-pin', (req, res) => {
+    try {
+      const { oldPin, newPin } = req.body;
+      if (!oldPin || !newPin) {
+        return res.status(400).json({ error: 'oldPin and newPin are required' });
+      }
+      const result = openscBridge.changeUserPin(oldPin, newPin);
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post('/api/v1/opensc/change-so-pin', (req, res) => {
+    try {
+      const { oldSoPin, newSoPin } = req.body;
+      if (!oldSoPin || !newSoPin) {
+        return res.status(400).json({ error: 'oldSoPin and newSoPin are required' });
+      }
+      const result = openscBridge.changeSoPin(oldSoPin, newSoPin);
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post('/api/v1/opensc/unlock-pin', (req, res) => {
+    try {
+      const { soPin, newPin } = req.body;
+      if (!soPin || !newPin) {
+        return res.status(400).json({ error: 'soPin and newPin are required' });
+      }
+      const result = openscBridge.unlockPin(soPin, newPin);
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
     }
   });
 

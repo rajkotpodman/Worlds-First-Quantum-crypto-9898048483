@@ -119,6 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
         { id: 'duress', label: 'Duress Self-Destruct Shredder', desc: 'PIN-triggered deniable panic wipe & decoy state generation', icon: Flame },
         { id: 'vault', label: 'Isolated Deniable Vault', desc: 'Hardware-isolated encrypted file & key repository', icon: FolderLock },
         { id: 'zerotouch', label: 'Zero-Touch Biometrics', desc: 'Hardware TEE & WebAuthn biometric identity verification', icon: Lock },
+        { id: 'opensc_suite', label: 'OpenSC Hardware Suite', desc: 'Integrated OpenSC Project (CardOS, PKCS#11 & PIN Manager)', icon: Cpu, highlight: true },
       ]
     },
     {

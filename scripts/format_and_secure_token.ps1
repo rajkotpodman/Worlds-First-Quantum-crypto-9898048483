@@ -33,8 +33,10 @@ $service = Get-Service -Name "SCardSvr" -ErrorAction SilentlyContinue
 Write-Host "    SCardSvr Status: $($service.Status)" -ForegroundColor Green
 
 # 3. Locate PKCS#11 DLL
+$localDll = "$PSScriptRoot\..\opensc\bin\pkcs11\opensc-pkcs11.dll"
 $pkcs11Paths = @(
     "C:\Windows\System32\eTPKCS11.dll",
+    $localDll,
     "E:\Program Files\SafeNet\Authentication\SAC\x64\eTPKCS11.dll",
     "C:\Program Files\SafeNet\Authentication\SAC\x64\eTPKCS11.dll",
     "C:\Program Files\OpenSC Project\OpenSC\pkcs11\opensc-pkcs11.dll"
@@ -54,7 +56,9 @@ if (-not $dll) {
 }
 Write-Host "[+] Using PKCS#11 Module: $dll" -ForegroundColor Green
 
-$tool = "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe"
+$localTool = "$PSScriptRoot\..\opensc\bin\tools\pkcs11-tool.exe"
+$sysTool = "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe"
+$tool = if (Test-Path $localTool) { $localTool } else { $sysTool }
 if (-not (Test-Path $tool)) {
     Write-Host "[-] pkcs11-tool not found in OpenSC directory." -ForegroundColor Red
     exit 1
