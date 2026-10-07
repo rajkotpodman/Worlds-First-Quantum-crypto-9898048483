@@ -74,7 +74,7 @@ eToken માં બે પ્રકારના ગુપ્ત પાસવર
 | PIN નો પ્રકાર | ડિફોલ્ટ વેલ્યુ | આનો ઉપયોગ ક્યારે થાય? |
 | :--- | :--- | :--- |
 | **૧. User PIN (વપરાશકર્તા પિન)** | `1097145198` | જ્યારે પણ તમારે વોલેટમાંથી સિક્કા મોકલવા (Transfer) હોય કે ડિજિટલ સહી કરવી હોય ત્યારે. |
-| **૨. SO PIN (સિક્યોરિટી ઓફિસર / એડમિન પિન)** | `1234567890123456` | જો User PIN ભૂલી જાવ તો તેને અનલોક કરવા અથવા આખા ટોકનને નવેસરથી ફોર્મેટ કરવા માટે. |
+| **૨. SO PIN (સિક્યોરિટી ઓફિસર / એડમિન પિન)** | `6112721149109714` | જો User PIN ભૂલી જાવ તો તેને અનલોક કરવા અથવા આખા ટોકનને નવેસરથી ફોર્મેટ કરવા માટે. |
 
 ---
 
@@ -104,7 +104,7 @@ eToken માં બે પ્રકારના ગુપ્ત પાસવર
 SO PIN બદલવા માટે નીચેનો કમાન્ડ વાપરો:
 
 ```powershell
-& "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --module "C:\Windows\System32\eTPKCS11.dll" --change-pin --so-pin --pin 1234567890123456 --new-pin તમારો_નવો_એડમિન_પિન
+& "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --module "C:\Windows\System32\eTPKCS11.dll" --change-pin --so-pin --pin 6112721149109714 --new-pin તમારો_નવો_એડમિન_પિન
 ```
 
 ---
@@ -142,7 +142,7 @@ SO PIN બદલવા માટે નીચેનો કમાન્ડ વા
 PowerShell ખોલો અને નીચેનો કમાન્ડ રન કરો:
 
 ```powershell
-& "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --module "C:\Windows\System32\eTPKCS11.dll" --init-pin --login --login-type so --so-pin 1234567890123456 --pin તમારો_નવો_પિન
+& "C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --module "C:\Windows\System32\eTPKCS11.dll" --init-pin --login --login-type so --so-pin 6112721149109714 --pin તમારો_નવો_પિન
 ```
 
 આ કમાન્ડથી જૂનો User PIN રીસેટ થઈ જશે અને તમે આપેલ નવો પિન સેટ થઈ જશે!
