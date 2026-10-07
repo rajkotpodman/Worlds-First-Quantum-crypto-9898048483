@@ -1,5 +1,35 @@
 [
   {
+    "id": "tx_1791353126598_wjb7aw",
+    "senderId": "india9898048483_sovereign_master",
+    "receiverId": "android_device_node_beta",
+    "amount": 50,
+    "type": "shielded",
+    "timestamp": "2026-10-07T06:05:26.598Z",
+    "txHash": "0x6679fb2673db881a114f77ec6",
+    "status": "confirmed"
+  },
+  {
+    "id": "tx_1791345563105_l7ybkl",
+    "senderId": "india9898048483@gmail.com",
+    "receiverId": "android_device_node_beta",
+    "amount": 100,
+    "type": "shielded",
+    "timestamp": "2026-10-07T03:59:23.105Z",
+    "txHash": "0x4c07f3493710d81a1148415e1",
+    "status": "confirmed"
+  },
+  {
+    "id": "tx_genesis_jut4s1o9",
+    "senderId": "SYSTEM_FAUCET_GENESIS",
+    "receiverId": "android_device_node_beta",
+    "amount": 1000,
+    "type": "genesis",
+    "timestamp": "2026-10-07T03:59:23.104Z",
+    "txHash": "0x7e7b8b869b4151a1148415e0",
+    "status": "confirmed"
+  },
+  {
     "id": "tx_1791177990551_mbs8t3",
     "senderId": "operator_alpha",
     "receiverId": "test_user",

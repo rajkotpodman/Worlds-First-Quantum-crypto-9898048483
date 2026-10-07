@@ -66,7 +66,7 @@ Write-Host "[*] Probing smart card slots..." -ForegroundColor White
 
 # 5. Initialize / Format Token
 $SO_PIN = "1234567890123456"
-$USER_PIN = "9898048483"
+$USER_PIN = "1097145198"
 $TOKEN_LABEL = "QuantumCryptoToken"
 $KEY_LABEL = "QuantumMasterKey"
 

@@ -49,6 +49,36 @@ export default function App() {
     setBalance(bal);
   };
 
+  const handleDirectAdminLogin = async () => {
+    try {
+      const res = await fetch('/api/v1/auth/direct-admin-login', { method: 'POST' });
+      if (res.ok) {
+        const d = await res.json();
+        if (d.success) {
+          const adminMail = 'india9898048483@gmail.com';
+          setUserEmail(adminMail);
+          localStorage.setItem('user_email', adminMail);
+          localStorage.setItem('admin_direct_login', 'true');
+          await loadBalance('india9898048483_sovereign_master', adminMail);
+          setAlerts((prev) => [
+            {
+              id: 'alt-' + Date.now(),
+              time: 'Just now',
+              type: 'SUCCESS',
+              title: 'Direct Admin Authenticated',
+              text: 'Verified Sovereign Master Session for india9898048483@gmail.com. 51% Stake access active.'
+            },
+            ...prev
+          ]);
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('Direct login error:', e);
+    }
+    return false;
+  };
+
   // Core Pipeline state
   const [pipeline, setPipeline] = useState<PipelineRun>({
     id: 'pipe-initial',
@@ -487,6 +517,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         userEmail={userEmail}
         onOpenAuth={() => setIsAuthModalOpen(true)}
+        onDirectAdminLogin={handleDirectAdminLogin}
         pipelineRunning={pipeline.status === 'running'}
         alertCount={alerts.filter((a) => a.type === 'CRITICAL').length}
       />

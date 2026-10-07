@@ -12,11 +12,13 @@ export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId
   const [balance, setBalance] = useState('1,000.0000');
   const [loading, setLoading] = useState(false);
   
+  const [hwAttached, setHwAttached] = useState<boolean>(true);
+
   const refresh = async () => {
     if (!userId) return;
     setLoading(true);
     try {
-      // Try backend endpoint first
+      // Query server endpoint which checks hardware presence
       const res = await fetch('/api/tokens/balance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -24,7 +26,8 @@ export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.balance) {
+        setHwAttached(data.hardwareAttached !== false);
+        if (data.balance !== undefined) {
           const num = Number(data.balance);
           const formatted = isNaN(num) ? data.balance : num.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
           setBalance(formatted);
@@ -33,17 +36,7 @@ export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId
         }
       }
     } catch {
-      // Offline fallback: Use atomic local store
-    }
-    
-    try {
-      const localBal = await fetchBalance(userId);
-      const num = Number(localBal);
-      const formatted = isNaN(num) ? localBal : num.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-      setBalance(formatted);
-      if (onBalanceUpdate) onBalanceUpdate(formatted);
-    } catch (e) {
-      console.error('[TokenBalanceDisplay] Error reading balance:', e);
+      // Offline: do not load 51% from PC
     } finally {
       setLoading(false);
     }
@@ -73,10 +66,21 @@ export const TokenBalanceDisplay: React.FC<TokenBalanceDisplayProps> = ({ userId
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
         </button>
       </div>
-      <p className="text-3xl sm:text-4xl font-mono text-emerald-400 mt-5 tracking-tight font-extrabold flex items-baseline">
-        {balance} 
-        <span className="text-xs text-slate-400 ml-2 font-sans font-medium">TOK</span>
-      </p>
+      <div className="mt-5 flex items-baseline justify-between flex-wrap gap-2">
+        <p className={`text-3xl sm:text-4xl font-mono tracking-tight font-extrabold flex items-baseline ${
+          hwAttached ? 'text-emerald-400' : 'text-red-400'
+        }`}>
+          {balance} 
+          <span className="text-xs text-slate-400 ml-2 font-sans font-medium">TOK</span>
+        </p>
+        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+          hwAttached 
+            ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' 
+            : 'bg-red-950/80 text-red-300 border-red-500/50'
+        }`}>
+          {hwAttached ? '🟢 eToken Chip Loaded' : '🔴 eToken Detached (Unloaded)'}
+        </span>
+      </div>
     </div>
   );
 };

@@ -15,9 +15,20 @@ export interface TransactionItem {
 runMigrations().catch(e => console.warn('[Migration] Error:', e));
 
 
-export const fetchBalance = async (userId: string, email?: string): Promise<number> => {
-  if (!userId) return 0;
-  
+export interface BalanceDetail {
+  balance: number;
+  isAdmin: boolean;
+  hardwareAttached: boolean;
+  hardwareStakeLoaded: boolean;
+  stakePercentage?: string;
+  source?: string;
+  hardwareInfo?: any;
+}
+
+export const fetchBalanceDetailed = async (userId: string, email?: string): Promise<BalanceDetail> => {
+  if (!userId) {
+    return { balance: 0, isAdmin: false, hardwareAttached: false, hardwareStakeLoaded: false };
+  }
   try {
     const response = await fetch('/api/tokens/balance', {
       method: 'POST',
@@ -25,19 +36,34 @@ export const fetchBalance = async (userId: string, email?: string): Promise<numb
       body: JSON.stringify({ userId, email })
     });
     const data = await response.json();
-    if (data.balance !== undefined && !isNaN(Number(data.balance))) {
-      return Number(data.balance);
-    }
-    // Fallback based on admin email
-    const isAdmin = (email && email.toLowerCase() === 'india9898048483@gmail.com') || userId.includes('india9898048483') || userId === 'operator_alpha';
-    return isAdmin ? 504799047233 : 1000;
+    return {
+      balance: Number(data.balance ?? data.rawBalance ?? 0),
+      isAdmin: Boolean(data.isAdmin),
+      hardwareAttached: Boolean(data.hardwareAttached),
+      hardwareStakeLoaded: Boolean(data.hardwareStakeLoaded),
+      stakePercentage: data.stakePercentage,
+      source: data.source,
+      hardwareInfo: data.hardwareInfo
+    };
   } catch (error: any) {
-    console.warn("[LedgerService] Fetch balance fallback:", error.message);
-    const localKey = `ledger_${userId}`;
-    const stored = localStorage.getItem(localKey);
-    if (stored !== null) return Number(stored);
-    const isAdmin = (email && email.toLowerCase() === 'india9898048483@gmail.com') || userId.includes('india9898048483') || userId === 'operator_alpha';
-    return isAdmin ? 504799047233 : 1000;
+    console.warn('[LedgerService] Failed to query balance from server:', error);
+    return {
+      balance: 0,
+      isAdmin: (email && email.toLowerCase() === 'india9898048483@gmail.com') || userId.includes('india9898048483'),
+      hardwareAttached: false,
+      hardwareStakeLoaded: false,
+      source: 'Hardware Unconfirmed - 51% Stake Isolated'
+    };
+  }
+};
+
+export const fetchBalance = async (userId: string, email?: string): Promise<number> => {
+  if (!userId) return 0;
+  try {
+    const detail = await fetchBalanceDetailed(userId, email);
+    return detail.balance;
+  } catch {
+    return 0;
   }
 };
 

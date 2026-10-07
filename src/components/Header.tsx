@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Terminal, 
@@ -27,7 +27,8 @@ import {
   ChevronDown,
   Layers,
   Search,
-  CheckCircle2
+  CheckCircle2,
+  Usb
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -35,6 +36,7 @@ interface HeaderProps {
   setActiveTab: (tab: string) => void;
   userEmail: string;
   onOpenAuth: () => void;
+  onDirectAdminLogin?: () => void;
   pipelineRunning: boolean;
   alertCount: number;
 }
@@ -58,11 +60,28 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   userEmail,
   onOpenAuth,
+  onDirectAdminLogin,
   pipelineRunning,
   alertCount,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [eTokenAttached, setETokenAttached] = useState<boolean>(true);
+
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch('/api/v1/vault/etoken-status');
+        if (res.ok) {
+          const d = await res.json();
+          setETokenAttached(Boolean(d.hardware?.attached));
+        }
+      } catch (_) {}
+    };
+    poll();
+    const iv = setInterval(poll, 2000);
+    return () => clearInterval(iv);
+  }, []);
 
   const categories: NavCategory[] = [
     {
@@ -203,6 +222,34 @@ export const Header: React.FC<HeaderProps> = ({
               <span>2030 $1.00 USD</span>
             </button>
 
+            {/* Hardware eToken Live Status Badge */}
+            <div 
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border text-xs font-mono transition-all ${
+                eTokenAttached 
+                  ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300 shadow-sm shadow-emerald-900/40' 
+                  : 'bg-red-950/90 border-red-500/80 text-red-200 animate-pulse shadow-md shadow-red-950'
+              }`}
+              title={eTokenAttached ? 'Aladdin eToken Pro 4254 Attached: 51% Sovereign Stake Loaded from Chip' : 'eToken Removed: 51% Sovereign Stake Unloaded. Transfers Halted!'}
+            >
+              <Usb className={`w-3.5 h-3.5 ${eTokenAttached ? 'text-emerald-400' : 'text-red-400 animate-spin'}`} />
+              <span className="hidden md:inline font-bold">
+                {eTokenAttached ? 'eToken Active' : 'eToken Removed'}
+              </span>
+              <span className={`w-2 h-2 rounded-full ${eTokenAttached ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'}`}></span>
+            </div>
+
+            {/* Direct Admin Login Quick Trigger */}
+            <button
+              id="direct-admin-login-btn"
+              onClick={onDirectAdminLogin || onOpenAuth}
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all bg-gradient-to-r from-amber-600/20 to-emerald-600/20 hover:from-amber-600/30 hover:to-emerald-600/30 border-amber-500/50 text-amber-300 shadow-sm cursor-pointer"
+              title="Direct Browser Login: Sovereign Master Admin (india9898048483@gmail.com)"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline font-bold">⚡ Direct Admin</span>
+              <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950/80 px-1 py-0.2 rounded border border-emerald-700/60">51%</span>
+            </button>
+
             {/* Google Identity & Stake Badge */}
             <button
               id="google-auth-btn"
@@ -214,8 +261,12 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <span className="hidden lg:inline max-w-[130px] truncate">{userEmail}</span>
               {userEmail.toLowerCase().includes('india9898048483') ? (
-                <span className="text-amber-300 text-[10px] font-bold px-1.5 py-0.5 bg-amber-950/70 rounded border border-amber-600/60">
-                  51% STAKE
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                  eTokenAttached 
+                    ? 'text-amber-300 bg-amber-950/70 border-amber-600/60' 
+                    : 'text-slate-400 bg-slate-900 border-slate-700 line-through'
+                }`}>
+                  51% STAKE {eTokenAttached ? '' : '(UNLOADED)'}
                 </span>
               ) : (
                 <span className="text-emerald-400 text-[10px] font-semibold uppercase px-1 py-0.5 bg-emerald-950/60 rounded border border-emerald-800/60">

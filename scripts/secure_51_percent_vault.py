@@ -38,7 +38,7 @@ def compute_state_hash(payload: Dict[str, Any]) -> str:
     serialized = json.dumps(payload, sort_keys=True)
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
-def execute_hardware_lock(user_pin: str = "9898048483", token_label: str = "QuantumCryptoToken") -> Dict[str, Any]:
+def execute_hardware_lock(user_pin: str = "1097145198", token_label: str = "QuantumCryptoToken") -> Dict[str, Any]:
     print("=" * 70)
     print(" [51% SOVEREIGN TOKEN HARDWARE SECURITY LOCK - eToken Pro / PKCS#11]")
     print("=" * 70)
@@ -152,5 +152,5 @@ def execute_hardware_lock(user_pin: str = "9898048483", token_label: str = "Quan
     return vault_record
 
 if __name__ == "__main__":
-    pin = sys.argv[1] if len(sys.argv) > 1 else "9898048483"
+    pin = sys.argv[1] if len(sys.argv) > 1 else "1097145198"
     execute_hardware_lock(user_pin=pin)
